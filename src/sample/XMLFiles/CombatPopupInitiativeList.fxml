@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<ScrollPane fx:id="PopupScrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="564.0" prefWidth="477.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.CombatPopupInitiativeListController">
+  <content>
+    <AnchorPane fx:id="PopupAnchorPane" minHeight="0.0" minWidth="0.0">
+         <children>
+            <TableView fx:id="PopupTableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="564.0" prefWidth="477.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <columns>
+                  <TableColumn fx:id="CharName" prefWidth="230.40001833438873" style="-fx-alignment: CENTER;" text="Character Name"><cellValueFactory><PropertyValueFactory property="characterName" />
+                  </cellValueFactory></TableColumn>
+                  <TableColumn fx:id="AddNotes" minWidth="0.0" prefWidth="163.20001220703125" style="-fx-alignment: CENTER;" text="Additional Notes"><cellValueFactory><PropertyValueFactory property="extraNotes" />
+                  </cellValueFactory></TableColumn>
+                  <TableColumn fx:id="Roll" minWidth="0.0" prefWidth="82.4000244140625" style="-fx-alignment: CENTER;" text="Roll"><cellValueFactory><PropertyValueFactory property="initiativeRoll" />
+                  </cellValueFactory></TableColumn>
+                  <TableColumn fx:id="Order" prefWidth="75.0" text="Order" visible="false" />
+               </columns>
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+               </columnResizePolicy></TableView>
+         </children></AnchorPane>
+  </content>
+</ScrollPane>

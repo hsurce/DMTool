@@ -1,0 +1,22 @@
+<component name="ArtifactManager">
+  <artifact type="javafx" name="DM Tool App">
+    <output-path>$PROJECT_DIR$/out/artifacts/DM_Tool_App</output-path>
+    <properties id="javafx-properties">
+      <options>
+        <option name="appClass" value="sample.Main" />
+        <option name="description" value="" />
+        <option name="height" value="783" />
+        <option name="htmlPlaceholderId" value="" />
+        <option name="title" value="High-Roll DM Tool" />
+        <option name="vendor" value="" />
+        <option name="version" value="" />
+        <option name="width" value="1280" />
+      </options>
+    </properties>
+    <root id="root">
+      <element id="archive" name="DM_Tool_App.jar">
+        <element id="module-output" name="DMTool" />
+      </element>
+    </root>
+  </artifact>
+</component>

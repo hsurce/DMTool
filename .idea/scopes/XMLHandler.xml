@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="XMLHandler" pattern="lib:Action||lib:AttackAction||lib:HitDie||lib:Information||lib:LegendaryAction||lib:Main||lib:Monster||lib:Spell||lib:SpellHitDie||lib:Stat||lib:Trait||lib:XMLHandler" />
+</component>

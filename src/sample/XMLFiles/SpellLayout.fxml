@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="content" prefHeight="768.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.SpellController">
+   <children>
+      <ImageView fitHeight="514.0" fitWidth="911.0" layoutX="22.0" layoutY="170.0" opacity="0.25" pickOnBounds="true">
+         <image>
+            <Image url="@/sample/ImageFiles/Spellbook.png" />
+         </image>
+      </ImageView>
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="333.0" layoutY="26.0" prefHeight="51.0" prefWidth="294.0" text="Spells" textAlignment="CENTER">
+         <font>
+            <Font name="Apple Chancery" size="36.0" />
+         </font>
+      </Label>
+      <TextField fx:id="SpellSearchBar" alignment="CENTER" layoutX="674.0" layoutY="20.0" prefHeight="29.0" prefWidth="260.0" promptText="Search" />
+      <Separator layoutX="22.0" layoutY="170.0" orientation="VERTICAL" prefHeight="520.0" prefWidth="6.0" />
+      <Separator layoutX="931.0" layoutY="170.0" orientation="VERTICAL" prefHeight="526.0" prefWidth="6.0" />
+      <Separator layoutX="22.0" layoutY="170.0" prefHeight="0.0" prefWidth="911.0" />
+      <Separator layoutX="22.0" layoutY="692.0" prefHeight="0.0" prefWidth="911.0" />
+      <Label alignment="CENTER" layoutX="26.0" layoutY="95.0" prefHeight="18.0" prefWidth="49.0" text="Filters:" underline="true">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Label>
+      <ToggleButton fx:id="CantripsToggleButton" layoutX="356.0" layoutY="133.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="74.0" text="Cantrips" />
+      <ToggleButton fx:id="firstToggleButton" layoutX="437.0" layoutY="133.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="49.0" text="1st" />
+      <ToggleButton fx:id="secondToggleButton" layoutX="493.0" layoutY="133.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="49.0" text="2nd" />
+      <ToggleButton fx:id="thirdToggleButton" layoutX="549.0" layoutY="133.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="49.0" text="3rd" />
+      <ToggleButton fx:id="fourthToggleButton" layoutX="605.0" layoutY="133.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="49.0" text="4th" />
+      <ToggleButton fx:id="fifthToggleButton" layoutX="660.0" layoutY="133.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="49.0" text="5th" />
+      <ToggleButton fx:id="sixthToggleButton" layoutX="715.0" layoutY="133.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="49.0" text="6th" />
+      <ToggleButton fx:id="seventhToggleButton" layoutX="771.0" layoutY="133.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="49.0" text="7th" />
+      <ToggleButton fx:id="eighthToggleButton" layoutX="826.0" layoutY="133.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="49.0" text="8th" />
+      <ToggleButton fx:id="ninethToggleButton" layoutX="882.0" layoutY="133.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="49.0" text="9th" />
+      <ChoiceBox fx:id="SourceChoiceBox" layoutX="90.0" layoutY="133.0" prefWidth="150.0" />
+      <Label alignment="CENTER" layoutX="128.0" layoutY="110.0" prefHeight="17.0" prefWidth="74.0" text="Source:" />
+      <Label layoutX="283.0" layoutY="138.0" prefHeight="17.0" prefWidth="72.0" text="Levels  --&gt;" />
+      <ToggleButton fx:id="BardToggleButton" layoutX="356.0" layoutY="103.0" mnemonicParsing="false" text="Bard" />
+      <ToggleButton fx:id="ClericToggleButton" layoutX="410.0" layoutY="103.0" mnemonicParsing="false" text="Cleric" />
+      <ToggleButton fx:id="DruidToggleButton" layoutX="470.0" layoutY="103.0" mnemonicParsing="false" text="Druid" />
+      <ToggleButton fx:id="PaladinToggleButton" layoutX="529.0" layoutY="103.0" mnemonicParsing="false" text="Paladin" />
+      <ToggleButton fx:id="RangerToggleButton" layoutX="598.0" layoutY="103.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="63.0" text="Ranger" />
+      <ToggleButton fx:id="SorcererToggleButton" layoutX="667.0" layoutY="103.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="74.0" text="Sorcerer" />
+      <ToggleButton fx:id="WarlockToggleButton" layoutX="746.0" layoutY="103.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="74.0" text="Warlock" />
+      <ToggleButton fx:id="WizardToggleButton" layoutX="826.0" layoutY="103.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="104.0" text="Wizard" />
+      <Label layoutX="279.0" layoutY="108.0" text="Classes --&gt;" />
+   </children>
+</AnchorPane>
