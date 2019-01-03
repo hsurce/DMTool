@@ -17,6 +17,7 @@
       <element id="archive" name="DM_Tool_App.jar">
         <element id="module-output" name="DMTool" />
       </element>
+      <element id="library" level="project" name="org.controlsfx:controlsfx:8.40.14" />
     </root>
   </artifact>
 </component>

@@ -22,7 +22,7 @@
             <Font name="Apple Chancery" size="36.0" />
          </font>
       </Label>
-      <TextField fx:id="SpellSearchBar" alignment="CENTER" layoutX="674.0" layoutY="20.0" prefHeight="29.0" prefWidth="260.0" promptText="Search" />
+      <TextField fx:id="SpellSearchBar" alignment="CENTER" layoutX="674.0" layoutY="20.0" prefHeight="29.0" prefWidth="260.0" promptText="Search"/>
       <Separator layoutX="22.0" layoutY="170.0" orientation="VERTICAL" prefHeight="520.0" prefWidth="6.0" />
       <Separator layoutX="931.0" layoutY="170.0" orientation="VERTICAL" prefHeight="526.0" prefWidth="6.0" />
       <Separator layoutX="22.0" layoutY="170.0" prefHeight="0.0" prefWidth="911.0" />
