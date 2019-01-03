@@ -27,7 +27,7 @@ public class SpellController {
     private ArrayList<Spell> spells;
     private ArrayList<Spell> filteredSpellList;
     private AutoCompletionBinding<String> autoCompletionBinding;
-
+    ArrayList<String> schoolPool = new ArrayList<>();
 
     public void Initialize(XMLHandler xmlh){
         this.xmlh = xmlh;
@@ -42,7 +42,7 @@ public class SpellController {
         filteredSpellList = new ArrayList<>();
         setButtons();
         InitializeSearchBar();
-
+        populateSchoolList();
 
     }
 
@@ -277,10 +277,13 @@ public class SpellController {
     private void BuildSpellPopUp(Spell spell) {
         GridPane gridPane = new GridPane();
         gridPane.setMaxWidth(600);
+        Label focusLabel = new Label();
         int counter = 0;
 
         if(!spell.getName().isEmpty()) {
-            Label name = new Label(spell.getName());
+
+            Label name = new Label("\n"+spell.getName());
+            focusLabel = name;
             name.setFont(Font.font("Apple Braille", 20));
             name.setStyle("-fx-text-fill: red");
             gridPane.add(name, 0,counter,1,1);
@@ -289,7 +292,7 @@ public class SpellController {
         if(!spell.getSchool().isEmpty()) {
 
             String levelName = "";
-
+            String school = "";
             boolean match = false;
             switch(spell.getLevel()) {
                 case 0: levelName = "Cantrip";
@@ -308,8 +311,15 @@ public class SpellController {
             if(match == false){
                 levelName = spell.getLevel()+"th-level";
             }
+            for (String s: schoolPool) {
 
-            Label levelAndSchool = new Label(levelName + " " + spell.getSchool());
+                if(Character.toString(s.charAt(0)).equals(Character.toString(spell.getSchool().charAt(0)))){
+                    if(Character.toString(s.charAt(1)).equalsIgnoreCase(Character.toString(spell.getSchool().charAt(1)))){
+                        school = s;
+                    }
+                }
+            }
+            Label levelAndSchool = new Label(levelName + " " + school);
             levelAndSchool.setFont(Font.font("Apple Braille", FontPosture.ITALIC, 16));
             gridPane.add(levelAndSchool,0,counter,1,1);
             counter++;
@@ -391,18 +401,25 @@ public class SpellController {
             }
         }
         if(!spell.getRolls().isEmpty()){
-
+            counter++;
+            ButtonBar buttonBar = new ButtonBar();
             for (SpellHitDie shd: spell.getRolls()) {
                 String roll;
-                roll = shd.getDieAmount()+"d"+shd.getDieSize()+"+"+shd.getBonus();
-                gridPane.add(new Label(roll),0,counter,1,1);
-                counter++;
+                String bonus = "";
+                if(shd.getBonus()<0) bonus = "+"+shd.getBonus();
+
+                roll = "\n"+shd.getDieAmount()+"d"+shd.getDieSize()+bonus;
+
                 Button rollButton = new Button("roll: " + roll);
+                rollButton.setFocusTraversable(false);
                 rollButton.setOnAction(e -> {
                     System.out.println("hej" + roll);
                 });
-                gridPane.add(rollButton, 1, counter, 1 ,1);
+                buttonBar.getButtons().add(rollButton);
             }
+
+            gridPane.add(buttonBar, 0, counter, 1 ,1);
+
         }
 
 
@@ -419,6 +436,13 @@ public class SpellController {
         scrollPane.setScaleY(anchorPane.getScaleY());
         scrollPane.setMaxWidth(800);
         scrollPane.setMaxHeight(1000);
+        scrollPane.setHvalue(0);
+        scrollPane.setVvalue(0);
+        scrollPane.setHmax(1);
+        scrollPane.setVmax(1);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        focusLabel.requestFocus();
 
         BorderPane borderPane = new BorderPane(scrollPane);
         borderPane.setScaleX(scrollPane.getScaleX());
@@ -429,5 +453,15 @@ public class SpellController {
         Stage stage = new Stage();
         stage.setScene(new Scene(borderPane));
         stage.show();
+    }
+    public void populateSchoolList(){
+        schoolPool.add("Abjuration");
+        schoolPool.add("Conjuration");
+        schoolPool.add("Enchantment");
+        schoolPool.add("Evocation");
+        schoolPool.add("Divination");
+        schoolPool.add("Illusion");
+        schoolPool.add("Necromancy");
+        schoolPool.add("Transmutation");
     }
 }
