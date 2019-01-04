@@ -132,22 +132,7 @@ public class SpellController {
         }
         Filter();
     }
-    /**
-     * FOR FILTER FUNKTION:
-     * 1. Lav arrayList(A1) på baggrund af navnene på knapperne når de bliver trykket på(både ved aktivering og deaktivering).
-     * 2. Konstruér en arrayList(A2) på baggrund af hashmappet ved at kalde hashmap.values() og læg det i en ArrayList(collection?)
-     * 3. For-loop på hver spell i values for at lave Venn-diagrammet. For hver entry i A2, skal der kaldes entry.getClasses().ContainsAll(A1).
-     * 4. Hvis denne returnerer true, skal de lægges i result-arrayListen og blive vist i spell listen.
-     * PROBLEM: Der er ikke taget højde for domains( f.eks. er Fireball også en Cleric (Light) domain spell el. Warlock (Fiend) )
-     *
-     * LØSNING: Udvid Spells til at indeholde et Domain field som bliver konstrueret ved lede efter parenteser efter String.split er blevet kaldt,
-     * og læg derefter både class navn og domain navn (feks. "Cleric (Light)") i en domain ArrayList, skær hele domainet fra i
-     * class name og læg så class name i class arrayListen.
-     * Så kan vi skrive "Archetype specific: CL: Light, WA: Fiend" el. noget lign. ud for spellens navn i spell listen.
-     *
-     * Der er heller ikke taget højde for hvilken bog de kommer fra. Vi kunne dog loope på om navnet indeholder ( .. ) da dette vil betyde det ikke er players.
-     *
-     */
+
     @FXML
     public AnchorPane content;
 
@@ -279,7 +264,9 @@ public class SpellController {
         gridPane.setMaxWidth(600);
         Label focusLabel = new Label();
         int counter = 0;
-
+/**
+ * HERFRA BLIVER ET HELT POPUP VINDUE KONSTRUERET PÅ BAGGRUND AF VÆRDIER I SPELL.
+ */
         if(!spell.getName().isEmpty()) {
 
             Label name = new Label("\n"+spell.getName());

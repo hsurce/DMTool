@@ -178,6 +178,7 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("XMLFiles/MonsterLayout.fxml"));
         Parent monsterRoot = loader.load();
         monsterController = (MonsterController)loader.getController();
+        monsterController.Initialize(xmlh);
         defaultController.splitPane.getItems().set(1,monsterController.content);
     }
 
