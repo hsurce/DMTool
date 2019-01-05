@@ -125,6 +125,7 @@ public class MonsterController {
 /**
  * HERFRA BLIVER ET HELT POPUP VINDUE KONSTRUERET PÅ BAGGRUND AF VÆRDIER I SPELL.
  */
+        //Name
         if(!info.getName().isEmpty()) {
 
             Label name = new Label("\n"+info.getName());
@@ -134,6 +135,7 @@ public class MonsterController {
             gridPane.add(name, 0,counter,1,1);
             counter++;
         }
+        //Size, type and Alignment
         if(!info.getSize().isEmpty()) {
 
             String concat = "\n"+info.getSize();
@@ -150,6 +152,7 @@ public class MonsterController {
             gridPane.add(sizeTypeAlignment, 0,counter,1,1);
             counter++;
         }
+        //Armor Class + text
         if(info.getAc() != null) {
 
             TextFlow acFlow = new TextFlow();
@@ -168,6 +171,7 @@ public class MonsterController {
             counter++;
 
         }
+        //Hp & HitDie + Bonus
         if(info.getHp() != 0) {
             TextFlow hpFlow = new TextFlow();
             Text text1 = new Text("Hit Points: ");
@@ -184,8 +188,8 @@ public class MonsterController {
             gridPane.add(hpFlow,0,counter,1,1);
             counter++;
         }
-
-        if(!monster.getSpeeds().isEmpty()) {
+        //Speeds
+        if(monster.getSpeeds() != null) {
 
             TextFlow speedFlow = new TextFlow();
             Text text1 = new Text("Speed: ");
@@ -214,11 +218,183 @@ public class MonsterController {
             counter++;
 
         }
+        //Ability Scores & Modifiers
         /**
          * LÆG ABILITY SCORES OG MODIFIERS IND
          */
 
+        //Saving throws
+        if(monster.getSaves() != null) {
 
+            TextFlow saveFlow = new TextFlow();
+            Text text1 = new Text("Saves: ");
+            text1.setStyle("-fx-font-weight: bold");
+
+            String concat = "";
+            int statCounter = 0;
+            for (Stat stat :monster.getSaves()            ) {
+                if(statCounter > 0){
+                    concat += ", ";
+                }
+
+                String statName = "";
+                if(!stat.getName().isEmpty()){
+                    statName = " " + stat.getName();
+                }
+                if(stat.getValue() < 0) {
+                    concat += stat.getValue() + statName;
+                }
+                else concat += "+"+stat.getValue()+statName;
+                statCounter++;
+            }
+
+            Text text2 = new Text(concat);
+            text2.setStyle("-fx-font-weight: regular");
+            saveFlow.getChildren().addAll(text1,text2);
+
+            gridPane.add(saveFlow,0,counter,1,1);
+            counter++;
+
+        }
+        //Skills
+        if(monster.getSkills() != null) {
+
+            TextFlow skillFlow = new TextFlow();
+            Text text1 = new Text("Skills: ");
+            text1.setStyle("-fx-font-weight: bold");
+
+            String concat = "";
+            int statCounter = 0;
+            for (Stat stat :monster.getSkills()            ) {
+                if(statCounter > 0){
+                    concat += ", ";
+                }
+
+                String statName = "";
+                if(!stat.getName().isEmpty()){
+                    statName = " " + stat.getName();
+                }
+
+                if(stat.getValue() < 0) {
+                    concat += stat.getValue() + statName;
+                }
+                else concat += "+"+stat.getValue()+statName;
+
+                statCounter++;
+            }
+
+            Text text2 = new Text(concat);
+            text2.setStyle("-fx-font-weight: regular");
+            skillFlow.getChildren().addAll(text1,text2);
+
+            gridPane.add(skillFlow,0,counter,1,1);
+            counter++;
+
+        }
+        //DamageResistances
+        if(monster.getResists() != null){
+            TextFlow resistFlow = new TextFlow();
+            Text text1 = new Text("Damage Resistances: ");
+            text1.setStyle("-fx-font-weight: bold");
+            int statCounter = 0;
+            String concat = "";
+            for (String s: monster.getResists()) {
+                if(statCounter > 0){
+                    concat += ", ";
+                }
+                concat += s;
+                statCounter++;
+            }
+            Text text2 = new Text(concat);
+            text2.setStyle("-fx-font-weight: regular");
+            resistFlow.getChildren().addAll(text1,text2);
+            gridPane.add(resistFlow,0,counter,1,1);
+            counter++;
+        }
+        //DamageImmunities
+        if(monster.getImmunities() != null){
+            TextFlow immunityFlow = new TextFlow();
+            Text text1 = new Text("Damage Immunities: ");
+            text1.setStyle("-fx-font-weight: bold");
+            int statCounter = 0;
+            String concat = "";
+            for (String s: monster.getResists()) {
+                if(statCounter > 0){
+                    concat += ", ";
+                }
+                concat += s;
+                statCounter++;
+            }
+            Text text2 = new Text(concat);
+            text2.setStyle("-fx-font-weight: regular");
+            immunityFlow.getChildren().addAll(text1,text2);
+            gridPane.add(immunityFlow,0,counter,1,1);
+            counter++;
+        }
+        //ConditionImmunities
+        if(monster.getConditionImmunities() != null){
+            TextFlow conditionImmunityFlow = new TextFlow();
+            Text text1 = new Text("Condition Immunities: ");
+            text1.setStyle("-fx-font-weight: bold");
+            int statCounter = 0;
+            String concat = "";
+            for (String s: monster.getResists()) {
+                if(statCounter > 0){
+                    concat += ", ";
+                }
+                concat += s;
+                statCounter++;
+            }
+            Text text2 = new Text(concat);
+            text2.setStyle("-fx-font-weight: regular");
+            conditionImmunityFlow.getChildren().addAll(text1,text2);
+            gridPane.add(conditionImmunityFlow,0,counter,1,1);
+            counter++;
+        }
+        //Senses
+        if(monster.getSenses() != null){
+            TextFlow sensesFlow = new TextFlow();
+            Text text1 = new Text("Senses: ");
+            text1.setStyle("-fx-font-weight: bold");
+            int statCounter = 0;
+            String concat = "";
+            for (Stat stat: monster.getSenses()) {
+                if(statCounter > 0){
+                    concat += ", ";
+                }
+                concat += stat.getName()+ " " + stat.getValue() + " ft.";
+                statCounter++;
+            }
+            Text text2 = new Text(concat);
+            text2.setStyle("-fx-font-weight: regular");
+            sensesFlow.getChildren().addAll(text1,text2);
+            gridPane.add(sensesFlow,0,counter,1,1);
+            counter++;
+        }
+        //PassivePerception
+        if(info.getPassivePerception() != 0){
+
+            TextFlow ppFlow = new TextFlow();
+            Text text1 = new Text("Passive Perception: ");
+            text1.setStyle("-fx-font-weight: bold");
+            Text text2;
+            if(info.getPassivePerception() < 0){
+                text2 = new Text(info.getPassivePerception()+"");
+            }
+            else text2 = new Text("+"+info.getPassivePerception()+"");
+            text2.setStyle("-fx-font-weight: regular");
+            ppFlow.getChildren().addAll(text1,text2);
+
+            gridPane.add(ppFlow,0,counter,1,1);
+            counter++;
+
+        }
+        //Languages
+        //Challenge
+        //Traits
+        //Actions
+        //AttackActions
+        //LegendaryActions
 
         AnchorPane anchorPane = new AnchorPane(gridPane);
         anchorPane.setScaleX(gridPane.getScaleX());
