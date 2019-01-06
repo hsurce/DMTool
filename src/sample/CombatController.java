@@ -1,5 +1,6 @@
 package sample;
 
+import XMLHandler.XMLHandler;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -13,8 +14,10 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import org.controlsfx.control.textfield.AutoCompletionBinding;
+import org.controlsfx.control.textfield.TextFields;
 import sample.ItemSkeletons.Initiative;
-
+import XMLHandler.Monster;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +30,9 @@ public class CombatController {
     HashMap<Integer, ArrayList<Initiative>> duplicationMap = new HashMap<>();
     CombatPopupInitiativeListController cpilc;
     ArrayList<TableRow<Initiative>> clearList;
+    XMLHandler xmlh;
+    ArrayList<Monster> monsters;
+    private AutoCompletionBinding<String> autoCompletionBinding;
 
     @FXML
     public AnchorPane content;
@@ -61,6 +67,8 @@ public class CombatController {
     public TextField TextFieldName;
 
     @FXML
+    public TextField monsterSearchBar;
+    @FXML
     public Button ButtonShowInitiativeListPopup;
 
     @FXML
@@ -78,10 +86,28 @@ public class CombatController {
     @FXML
     public TextField TextFieldDex;
 
-    public void initialize(){
+    public void initialize(MonsterController monsterController, XMLHandler xmlh){
 
         TableViewOrder.setComparator(TableViewOrder.getComparator().reversed());
         TableViewInitiative.getSortOrder().add(TableViewOrder);
+        this.xmlh = xmlh;
+        monsters = new ArrayList(xmlh.getMonsterHashMap().values());
+        InitializeSearchBar();
+
+        TableViewInitiative.setRowFactory(tv -> {
+            TableRow<Initiative> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
+                    Initiative rowData = row.getItem();
+                    if(xmlh.getMonsterHashMap().containsKey(rowData.getCharacterName())) {
+                        monsterController.BuildMonsterPopUp(xmlh.getMonsterHashMap().get(rowData.getCharacterName()));
+                    }
+                }
+            });
+            return row ;
+        });
+
+
 
         //ADD
         ButtonAddInitiative.setOnAction(e -> {
@@ -188,8 +214,8 @@ public class CombatController {
         arrListInit.add(new Initiative("<p>Will", "NEW ROLL!", "Jakob", 18));
         arrListInit.add(new Initiative("<p>Innil", "NEW ROLL!", "Daniel", 12));
         arrListInit.add(new Initiative("<p>Belfir", "NEW ROLL!", "Tobias", 15));
-        arrListInit.add(new Initiative("<p>Kevin", "NEW ROLL!", "Christian", 10));
-        arrListInit.add(new Initiative("<p>Selise", "NEW ROLL!", "Malte", 10));
+        arrListInit.add(new Initiative("<p>Kevin", "NEW ROLL!", "Christian", 19));
+        arrListInit.add(new Initiative("<p>Selise", "NEW ROLL!", "Malte", 11));
         arrListInit.add(new Initiative("<p>Thorning", "NEW ROLL!", "Jon", 11));
         arrListInit.add(new Initiative("<p>Nisha", "NEW ROLL!", "Seb(Nattergalen)", 16));
 
@@ -258,4 +284,38 @@ public class CombatController {
             }
         }
     }
+    private void InitializeSearchBar() {
+        ArrayList<String> monsterNames = new ArrayList<>();
+        TextFields.bindAutoCompletion(monsterSearchBar, monsterNames);
+
+            for (Monster monster: monsters) {
+                monsterNames.add(monster.getInfo().getName());
+            }
+            bindAutoComplete(monsterNames);
+    }
+
+    private void bindAutoComplete(ArrayList<String> monsterNames){
+        if(autoCompletionBinding != null) {
+            autoCompletionBinding.dispose();
+        }
+        autoCompletionBinding = TextFields.bindAutoCompletion(monsterSearchBar, monsterNames);
+        autoCompletionBinding.setOnAutoCompleted(event ->
+                handleCompletion(event.getCompletion()));
+
+    }
+
+    private void handleCompletion(String s) {
+        if(xmlh.getMonsterHashMap().containsKey(s)){
+            Monster monster = xmlh.getMonsterHashMap().get(s);
+            TextFieldName.clear();
+            TextFieldDex.clear();
+            TextFieldRoll.clear();
+            TextFieldName.setText(monster.getInfo().getName());
+            TextFieldDex.setText(monster.getInfo().getDex()+"");
+            TextFieldRoll.setText("NEW ROLL!");
+            ButtonAddInitiative.fire();
+            monsterSearchBar.clear();
+        }
+    }
+
 }

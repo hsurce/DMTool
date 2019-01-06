@@ -6,9 +6,7 @@ import XMLHandler.XMLHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.Text;
@@ -252,14 +250,15 @@ public class SpellController {
 
     public void handleCompletion(String s) {
 
-        if(xmlh.getSpellHashMap().containsKey(s)){
-            Spell spell = xmlh.getSpellHashMap().get(s);
+        if(xmlh.getSpellHashMap().containsKey(s.toLowerCase())){
+            Spell spell = xmlh.getSpellHashMap().get(s.toLowerCase());
             System.out.println("YO!");
             BuildSpellPopUp(spell);
+            SpellSearchBar.clear();
         }
     }
 
-    private void BuildSpellPopUp(Spell spell) {
+    public void BuildSpellPopUp(Spell spell) {
         GridPane gridPane = new GridPane();
         gridPane.setMaxWidth(600);
         Label focusLabel = new Label();
@@ -301,9 +300,12 @@ public class SpellController {
             for (String s: schoolPool) {
 
                 if(Character.toString(s.charAt(0)).equals(Character.toString(spell.getSchool().charAt(0)))){
-                    if(Character.toString(s.charAt(1)).equalsIgnoreCase(Character.toString(spell.getSchool().charAt(1)))){
-                        school = s;
+                    if(spell.getSchool().length() > 1) {
+                        if (Character.toString(s.charAt(1)).equalsIgnoreCase(Character.toString(spell.getSchool().charAt(1)))) {
+                            school = s;
+                        }
                     }
+                    else school = s;
                 }
             }
             Label levelAndSchool = new Label(levelName + " " + school);
@@ -411,17 +413,9 @@ public class SpellController {
 
 
 
-
-        AnchorPane anchorPane = new AnchorPane(gridPane);
-        anchorPane.setScaleX(gridPane.getScaleX());
-        anchorPane.setScaleY(gridPane.getScaleY());
-        anchorPane.setMaxWidth(800);
-        anchorPane.setMaxHeight(2000);
-
-        ScrollPane scrollPane = new ScrollPane(anchorPane);
-        scrollPane.setScaleX(anchorPane.getScaleX());
-        scrollPane.setScaleY(anchorPane.getScaleY());
-        scrollPane.setMaxWidth(800);
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setContent(gridPane);
+        //scrollPane.setMaxWidth(800);
         scrollPane.setMaxHeight(1000);
         scrollPane.setHvalue(0);
         scrollPane.setVvalue(0);
@@ -429,16 +423,35 @@ public class SpellController {
         scrollPane.setVmax(1);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-        focusLabel.requestFocus();
 
-        BorderPane borderPane = new BorderPane(scrollPane);
-        borderPane.setScaleX(scrollPane.getScaleX());
-        borderPane.setScaleY(scrollPane.getScaleY());
-        borderPane.setMaxWidth(800);
-        borderPane.setMaxHeight(1000);
+        gridPane.setPrefWidth(600);
+        gridPane.setScaleX(scrollPane.getScaleX());
+        scrollPane.setFitToWidth(true);
+        //BorderPane borderPane = new BorderPane(scrollPane);
+
+/**
+ scrollPane.setScaleX(borderPane.getScaleX());
+ scrollPane.setScaleY(borderPane.getScaleY());
+ */
+        ColumnConstraints columnConstraints = new ColumnConstraints();
+        columnConstraints.setHgrow(Priority.ALWAYS);
+        columnConstraints.setFillWidth(true);
+        gridPane.getColumnConstraints().add(columnConstraints);
+/**
+ borderPane.setScaleX(scrollPane.getScaleX());
+ borderPane.setScaleY(scrollPane.getScaleY());
+ borderPane.setMaxHeight(1000);
+ */
 
         Stage stage = new Stage();
-        stage.setScene(new Scene(borderPane));
+        stage.setTitle(spell.getName());
+        Scene scene = new Scene(scrollPane, 800, 600);
+        /**
+         borderPane.setPadding(new Insets(0,0,0,0));
+         borderPane.prefHeightProperty().bind(scene.heightProperty());
+         borderPane.prefWidthProperty().bind(scene.widthProperty());
+         */
+        stage.setScene(scene);
         stage.show();
     }
     public void populateSchoolList(){

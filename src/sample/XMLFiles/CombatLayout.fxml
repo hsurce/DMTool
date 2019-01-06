@@ -21,7 +21,7 @@
                 <Font name="Apple Chancery" size="48.0" />
             </font>
         </Label>
-      <TableView fx:id="TableViewInitiative" layoutX="37.0" layoutY="102.0" prefHeight="564.0" prefWidth="477.0" onKeyPressed="#HandleOnKeyPressed">
+      <TableView fx:id="TableViewInitiative" layoutX="37.0" layoutY="102.0" onKeyPressed="#HandleOnKeyPressed" prefHeight="564.0" prefWidth="477.0">
         <columns>
           <TableColumn fx:id="TableViewName" prefWidth="225.60002517700195" style="-fx-alignment: CENTER;" text="Name"><cellValueFactory><PropertyValueFactory property="characterName" />
           </cellValueFactory></TableColumn>
@@ -41,7 +41,7 @@
       <TextField fx:id="TextFieldName" alignment="CENTER" layoutX="38.0" layoutY="675.0" prefHeight="25.0" prefWidth="114.0" promptText="Name" />
       <TextField fx:id="TextFieldRoll" alignment="CENTER" layoutX="163.0" layoutY="675.0" prefHeight="25.0" prefWidth="51.0" promptText="Roll" />
         <TextField fx:id="TextFieldAdditionalNotes" alignment="CENTER" layoutX="224.0" layoutY="675.0" prefHeight="26.0" prefWidth="140.0" promptText="Additional Notes" />
-      <TextField fx:id="TextFieldDex" alignment="CENTER" layoutX="371.0" layoutY="674.0" prefHeight="26.0" prefWidth="38.0" promptText="Dex" onAction="#onEnter" />
+      <TextField fx:id="TextFieldDex" alignment="CENTER" layoutX="371.0" layoutY="674.0" onAction="#onEnter" prefHeight="26.0" prefWidth="38.0" promptText="Dex" />
       <ChoiceBox fx:id="ChoiceBoxInitiative" layoutX="555.0" layoutY="162.0" prefWidth="150.0" />
       <Label alignment="CENTER" contentDisplay="CENTER" layoutX="630.0" layoutY="108.0" prefHeight="27.0" prefWidth="192.0" text="Automatic Maneuvers" underline="true">
          <font>
@@ -68,5 +68,6 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
       </GridPane>
+      <TextField fx:id="monsterSearchBar" layoutX="38.0" layoutY="39.0" promptText="Search for monster..." />
     </children>
 </AnchorPane>

@@ -45,6 +45,9 @@ public class Main extends Application {
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("XMLFiles/LoginLayout.fxml"));
             Parent loginroot = fxmlLoader.load();
             loginController = fxmlLoader.getController();
+
+            //LOAD af alle FXML filer.
+            loadXMLFiles();
             primaryStage.setScene(new Scene(loginroot));
             primaryStage.initStyle(StageStyle.UNDECORATED);
             dragWindow(loginroot, primaryStage);
@@ -99,7 +102,7 @@ public class Main extends Application {
         Button combatButton = defaultController.CombatButton;
         combatButton.setOnAction(e -> {
             try{
-                CombatButtonClicked(primaryStage);
+                CombatButtonClicked();
             }
             catch(Exception e1) {
                 e1.printStackTrace();
@@ -160,55 +163,40 @@ public class Main extends Application {
         });
     }
 
-    private void CombatButtonClicked(Stage primaryStage) throws Exception {
-        combat(primaryStage);
+    private void CombatButtonClicked() throws Exception {
+        combat();
     }
 
-    private void combat(Stage primaryStage) throws IOException {
-        if(hasCombat == false) {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("XMLFiles/CombatLayout.fxml"));
-            Parent combatRoot = loader.load();
-            combatController = (CombatController) loader.getController();
-            hasCombat = true;
-        }
+    private void combat() throws IOException {
+
         defaultController.splitPane.getItems().set(1,combatController.content);
     }
 
-    public void monster(Stage primaryStage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("XMLFiles/MonsterLayout.fxml"));
-        Parent monsterRoot = loader.load();
-        monsterController = (MonsterController)loader.getController();
-        monsterController.Initialize(xmlh);
+    public void monster() throws Exception {
+
+        monsterController.Initialize(xmlh, this);
         defaultController.splitPane.getItems().set(1,monsterController.content);
     }
 
 
+    public void spell() throws Exception{
 
-
-    public void spell(Stage primaryStage) throws Exception{
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("XMLFiles/SpellLayout.fxml"));
-        Parent spellRoot = loader.load();
-        spellController = (SpellController)loader.getController();
         spellController.Initialize(xmlh);
         defaultController.splitPane.getItems().set(1,spellController.content);
     }
 
-    public void items(Stage primaryStage) throws Exception{
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("XMLFiles/ItemLayout.fxml"));
-        Parent itemRoot = loader.load();
-        itemController = (ItemController)loader.getController();
+    public void items() throws Exception{
+
         defaultController.splitPane.getItems().set(1,itemController.content);
     }
 
-    public void magicItems(Stage primaryStage) throws Exception{
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("XMLFiles/MagicItemLayout.fxml"));
-        Parent magicItemRoot = loader.load();
-        magicItemController = (MagicItemController)loader.getController();
+    public void magicItems() throws Exception{
+
         defaultController.splitPane.getItems().set(1,magicItemController.content);
 
     }
 
-    public void nameGenerator(Stage primaryStage) throws Exception {
+    public void nameGenerator() throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("XMLFiles/NameGeneratorLayout.fxml"));
         Parent namegeneratorroot = loader.load();
         nameGeneratorController = (NameGeneratorController)loader.getController();
@@ -227,19 +215,19 @@ public class Main extends Application {
     }
 
     public void monsterButtonClicked(Stage monsterStage) throws Exception {
-        monster(monsterStage);
+        monster();
     }
     public void spellButtonClicked(Stage spellStage) throws Exception {
-        spell(spellStage);
+        spell();
     }
     public void itemButtonClicked(Stage itemStage) throws Exception {
-        items(itemStage);
+        items();
     }
     public void magicItemButtonClicked(Stage magicItemStage) throws Exception {
-        magicItems(magicItemStage);
+        magicItems();
     }
     public void nameGeneratorButtonClicked(Stage nameGeneratorStage) throws Exception {
-        nameGenerator(nameGeneratorStage);
+        nameGenerator();
     }
 
     public void dragWindow(Parent p, Stage primaryStage){
@@ -258,9 +246,38 @@ public class Main extends Application {
 
         });
     }
+    private void loadXMLFiles() throws IOException {
+
+
+        FXMLLoader monsterLoader = new FXMLLoader(getClass().getResource("XMLFiles/MonsterLayout.fxml"));
+        Parent monsterRoot = monsterLoader.load();
+        monsterController = (MonsterController)monsterLoader.getController();
+
+        FXMLLoader combatLoader = new FXMLLoader(getClass().getResource("XMLFiles/CombatLayout.fxml"));
+        Parent combatRoot = combatLoader.load();
+        combatController = (CombatController) combatLoader.getController();
+        combatController.initialize(monsterController, xmlh);
+
+        FXMLLoader spellLoader = new FXMLLoader(getClass().getResource("XMLFiles/SpellLayout.fxml"));
+        Parent spellRoot = spellLoader.load();
+        spellController = (SpellController)spellLoader.getController();
+        spellController.Initialize(xmlh);
+
+        FXMLLoader itemLoader = new FXMLLoader(getClass().getResource("XMLFiles/ItemLayout.fxml"));
+        Parent itemRoot = itemLoader.load();
+        itemController = (ItemController)itemLoader.getController();
+
+        FXMLLoader magicItemLoader = new FXMLLoader(getClass().getResource("XMLFiles/MagicItemLayout.fxml"));
+        Parent magicItemRoot = magicItemLoader.load();
+        magicItemController = (MagicItemController)magicItemLoader.getController();
+
+    }
 
 
     public static void main(String[] args) {
         launch(args);
+    }
+    public SpellController getSpellController(){
+        return spellController;
     }
 }
