@@ -14,7 +14,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
-import sample.Main;
 import sample.SpellController;
 
 /**
@@ -117,6 +116,10 @@ public class MonsterPopup extends Popup {
         if(monster.getAttackActions() != null) {
            buildAttackActions();
         }
+        //Reaction
+        if(monster.getInfo().getReaction() != null){
+            buildReaction();
+        }
         //LegendaryActions
         if(monster.getLegendaryActions() != null){
             buildLegendaryActions();
@@ -153,6 +156,21 @@ public class MonsterPopup extends Popup {
         super.stage.show();
     }
 
+    private void buildReaction() {
+        TextFlow reactionFlow = new TextFlow();
+        Text text1 = new Text(monster.getInfo().getReaction().getName());
+        text1.setStyle("-fx-font-weight: bold");
+        String concat = "";
+        for (String string: monster.getInfo().getReaction().getTexts()) {
+            concat += "\n"+string;
+
+        }
+        Text text2 = new Text(concat);
+        reactionFlow.getChildren().addAll(text1,text2);
+        gridPane.add(reactionFlow,0,counter,1,1);
+        counter++;
+    }
+
     private void buildSkills(){
 
         TextFlow skillFlow = new TextFlow();
@@ -161,7 +179,7 @@ public class MonsterPopup extends Popup {
 
         String concat = "";
         int statCounter = 0;
-        for (Stat stat :monster.getSkills()            ) {
+        for (Stat stat :monster.getSkills()) {
             if(statCounter > 0){
                 concat += ", ";
             }
@@ -254,16 +272,8 @@ public class MonsterPopup extends Popup {
         TextFlow sensesFlow = new TextFlow();
         Text text1 = new Text("Senses: ");
         text1.setStyle("-fx-font-weight: bold");
-        int statCounter = 0;
-        String concat = "";
-        for (Stat stat: monster.getSenses()) {
-            if(statCounter > 0){
-                concat += ", ";
-            }
-            concat += stat.getName()+ " " + stat.getValue() + " ft.";
-            statCounter++;
-        }
-        Text text2 = new Text(concat);
+
+        Text text2 = new Text(monster.getSenses());
 
         sensesFlow.getChildren().addAll(text1,text2);
         gridPane.add(sensesFlow,0,counter,1,1);
@@ -524,22 +534,7 @@ public class MonsterPopup extends Popup {
         Text text1 = new Text("Speed: ");
         text1.setStyle("-fx-font-weight: bold");
 
-        String concat = "";
-        int statCounter = 0;
-        for (Stat stat :monster.getSpeeds()            ) {
-            if(statCounter > 0){
-                concat += ", ";
-            }
-
-            String statName = "";
-            if(!stat.getName().isEmpty()){
-                statName = " " + stat.getName();
-            }
-            concat += stat.getValue() + " ft." + statName;
-            statCounter++;
-        }
-
-        Text text2 = new Text(concat+"\n");
+        Text text2 = new Text(monster.getSpeeds() +"\n");
 
         speedFlow.getChildren().addAll(text1,text2);
 

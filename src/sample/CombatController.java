@@ -97,6 +97,7 @@ public class CombatController {
         this.xmlh = globalController.getXmlh();
         this.monsterController = globalController.getMonsterController();
         monsters = new ArrayList(xmlh.getMonsterHashMap().values());
+        this.globalController = globalController;
 
 
         InitializeSearchBar();
@@ -137,7 +138,7 @@ public class CombatController {
                     Initiative rowData = row.getItem();
                     if(xmlh.getMonsterHashMap().containsKey(rowData.getCharacterName())) {
                         MonsterPopup monsterPopup = new MonsterPopup(xmlh, xmlh.getMonsterHashMap().get(rowData.getCharacterName()), globalController.getSpellController());
-
+                        globalController.checkForDuplicatePopup(monsterPopup);
                     }
                 }
             });
@@ -161,6 +162,20 @@ public class CombatController {
                 Optional<String> result = dialog.showAndWait();
                 result.ifPresent(newRoll -> initiative.setInitiativeRoll(newRoll));
                 initiative.calcFinalInitiative();
+                /**
+                 * HER ER finalInitiative LAGT TIL FOR LETHEDENS SKYLD. SKAL HAVE BEDRE FIX!
+                 *
+                 *
+                 *
+                 *
+                 *
+                 *
+                 *
+                 *
+                 *
+                 *
+                 */
+                initiative.setInitiativeRoll(initiative.getInitiativeRoll() + " | " + initiative.getFinalInitiative());
                 forceSortColumn(sortOrder);
             }
             checkForDuplication();
@@ -234,6 +249,20 @@ public class CombatController {
                 initiative.setExtraNotes(TextFieldAdditionalNotes.getText());
                 initiative.setInitiativeRoll(TextFieldRoll.getText());
                 initiative.calcFinalInitiative();
+                /**
+                 * HER ER finalInitiative LAGT TIL FOR LETHEDENS SKYLD. SKAL HAVE BEDRE FIX!
+                 *
+                 *
+                 *
+                 *
+                 *
+                 *
+                 *
+                 *
+                 *
+                 *
+                 */
+                initiative.setInitiativeRoll(initiative.getInitiativeRoll() + " | " + initiative.getFinalInitiative());
                 TableViewInitiative.getItems().add(initiative);
                 forceSortColumn(sortOrder);
 

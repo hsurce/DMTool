@@ -11,9 +11,9 @@ public class Monster implements Serializable {
     static final long serialVersionUID = 105;
     private Information info;
     private ArrayList<Stat> skills;
-    private ArrayList<Stat> speeds;
+    private String speeds;
     private ArrayList<Stat> saves;
-    private ArrayList<Stat> senses;
+    private String senses;
     private ArrayList<Trait> traits;
     private ArrayList<Action> actions;
     private ArrayList<Action> legendaryActions;
@@ -26,7 +26,7 @@ public class Monster implements Serializable {
     private ArrayList<Integer> spellSlots;
     private ArrayList<String> vulnerable;
     public Monster(
-            Information info, ArrayList<Stat> skills, ArrayList<Stat> speeds, ArrayList<Stat> saves, ArrayList<Stat> senses, ArrayList<Trait> traits,
+            Information info, ArrayList<Stat> skills, String speeds, ArrayList<Stat> saves, String senses, ArrayList<Trait> traits,
             ArrayList<Action> actions, ArrayList<Action> legendaryActions, ArrayList<AttackAction> attackActions, ArrayList<String> languages,
             ArrayList<String> resists, ArrayList<String> immunities, ArrayList<String> conditionImmunities, ArrayList<String> spells, ArrayList<Integer> spellSlots, ArrayList<String> vulnerable){
 
@@ -64,11 +64,11 @@ public class Monster implements Serializable {
         this.skills = skills;
     }
 
-    public ArrayList<Stat> getSpeeds() {
+    public String getSpeeds() {
         return speeds;
     }
 
-    public void setSpeeds(ArrayList<Stat> speeds) {
+    public void setSpeeds(String speeds) {
         this.speeds = speeds;
     }
 
@@ -80,11 +80,11 @@ public class Monster implements Serializable {
         this.saves = saves;
     }
 
-    public ArrayList<Stat> getSenses() {
+    public String getSenses() {
         return senses;
     }
 
-    public void setSenses(ArrayList<Stat> senses) {
+    public void setSenses(String senses) {
         this.senses = senses;
     }
 

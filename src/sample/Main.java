@@ -10,12 +10,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import sample.Popups.Popup;
 
 import java.io.IOException;
 import java.net.URL;
 import java.security.CodeSource;
-import java.util.HashSet;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -182,38 +180,4 @@ public class Main extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-
-    public SpellController getSpellController(){
-        return spellController;
-    }
-
-    public LoginController getLoginController() {
-        return loginController;
-    }
-
-    public DefaultController getDefaultController() {
-        return defaultController;
-    }
-
-    public CombatController getCombatController() {
-        return combatController;
-    }
-
-    public MonsterController getMonsterController() {
-        return monsterController;
-    }
-
-    public ItemController getItemController() {
-        return itemController;
-    }
-
-    public MagicItemController getMagicItemController() {
-        return magicItemController;
-    }
-
-    public NameGeneratorController getNameGeneratorController() {
-        return nameGeneratorController;
-    }
-
-
 }
