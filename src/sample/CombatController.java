@@ -16,14 +16,15 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.TextFields;
+import sample.ItemSkeletons.Condition;
 import sample.ItemSkeletons.Initiative;
 import XMLHandler.Monster;
 import sample.Popups.MonsterPopup;
+import XMLHandler.Spell;
+import sample.Popups.SpellPopup;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Optional;
+import java.util.*;
 
 
 public class CombatController {
@@ -34,9 +35,12 @@ public class CombatController {
     private ArrayList<TableRow<Initiative>> clearList;
     private XMLHandler xmlh;
     private ArrayList<Monster> monsters;
-    private AutoCompletionBinding<String> autoCompletionBinding;
+    private AutoCompletionBinding<String> autoCompletionBindingMonster;
+    private AutoCompletionBinding<String> autoCompletionBindingSpellsAndConditions;
     private MonsterController monsterController;
     private GlobalController globalController;
+    private ArrayList<Spell> spells;
+    private ArrayList<String> conditions;
 
     @FXML
     public AnchorPane content;
@@ -44,7 +48,8 @@ public class CombatController {
     @FXML
     public Button ButtonNewRoll;
 
-    @FXML Button ButtonClear;
+    @FXML
+    public Button ButtonClear;
 
     @FXML
     public TextField TextFieldRoll;
@@ -53,7 +58,7 @@ public class CombatController {
     public Button ButtonAddInitiative;
 
     @FXML
-    public ChoiceBox<?> ChoiceBoxInitiative;
+    public ChoiceBox<String> InitiativeConditionChoiceBox;
 
     @FXML
     public TableView<Initiative> TableViewInitiative;
@@ -65,13 +70,14 @@ public class CombatController {
     public TextField TextFieldAdditionalNotes;
 
     @FXML
-    public GridPane GridPaneAutomaticManeuvers;
+    public TableView<Condition> ConditionTableView;
 
     @FXML
     public TextField TextFieldName;
 
     @FXML
     public TextField monsterSearchBar;
+
     @FXML
     public Button ButtonShowInitiativeListPopup;
 
@@ -90,6 +96,15 @@ public class CombatController {
     @FXML
     public TextField TextFieldDex;
 
+    @FXML
+    public TextField InitiativeConditionOrSpellSearchBar;
+
+    @FXML
+    public Button DeleteConditionButton;
+
+    @FXML
+    public Button ClearConditionsButton;
+
     public void initialize(GlobalController globalController){
 
         TableViewOrder.setComparator(TableViewOrder.getComparator().reversed());
@@ -100,16 +115,95 @@ public class CombatController {
         this.globalController = globalController;
 
 
-        InitializeSearchBar();
+        conditions = new ArrayList(Arrays.asList(new String[]{"Blinded","Charmed","Deafened","Exhaustion","Frightened", "Grappled", "Incapacitated", "Paralyzed", "Petrified",
+        "Poisoned", "Prone", "Restrained", "Stunned", "Unconscious"}));
+
+        spells = new ArrayList(xmlh.getSpellHashMap().values());
+        Collections.sort(spells, (item, t1) -> {
+            String s1 = item.getName();
+            String s2 = t1.getName();
+            return s1.compareToIgnoreCase(s2);
+        });
+
+        InitializeSpellOrConditionSearchBar();
+        InitializeMonsterSearchBar();
         initiateGetMonsterOnDoubleClick();
+        initiateGetSpellOnDoubleClick();
         initiateAddButton();
         initiateDeleteButton();
         initiateInitiativeListPopupButton();
         initiateClearButton();
         initiateNewRollButton();
         initiatePreBuiltPlayerList();
+        InitializeInitiativeChoiceBox();
+        initiateClearConditionsButton();
+        initiateConditionDeleteButton();
+        initiateInitiativeTableRowListener();
 
         forceSortColumn(sortOrder);
+    }
+
+    private void initiateInitiativeTableRowListener() {
+        TableViewInitiative.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                InitiativeConditionChoiceBox.getSelectionModel().select(newSelection.getCharacterName());
+            }
+        });
+    }
+
+    private void initiateConditionDeleteButton() {
+
+        DeleteConditionButton.setOnAction( e -> {
+            for (Initiative initiative: TableViewInitiative.getItems()) {
+                if(initiative.getCharacterName().equals(InitiativeConditionChoiceBox.getSelectionModel().getSelectedItem())){
+                    ObservableList<Condition> conditionSelected, allConditions;
+                    allConditions = initiative.getConditionTableView().getItems();
+                    conditionSelected = ConditionTableView.getSelectionModel().getSelectedItems();
+                    conditionSelected.forEach(allConditions::remove);
+                    populateConditionTable(initiative);
+                    break;
+                }
+            }
+        });
+    }
+
+    private void initiateClearConditionsButton(){
+        ClearConditionsButton.setOnAction(e -> {
+            for (Initiative initiative: TableViewInitiative.getItems()) {
+                if(initiative.getCharacterName().equals(InitiativeConditionChoiceBox.getSelectionModel().getSelectedItem())){
+                    initiative.getConditionTableView().getItems().clear();
+                    ConditionTableView.getItems().clear();
+                    break;
+                }
+
+            }
+        });
+    }
+
+    private void InitializeInitiativeChoiceBox() {
+        if(!InitiativeConditionChoiceBox.getItems().isEmpty()){
+            InitiativeConditionChoiceBox.getItems().clear();
+        }
+        //SET ONACTION PÅ CHOICEBOX
+            InitiativeConditionChoiceBox.setOnAction(e ->{
+                for (Initiative initiative: TableViewInitiative.getItems()) {
+                    ConditionTableView.getItems().clear();
+                    if(InitiativeConditionChoiceBox.getSelectionModel().getSelectedItem() != null) {
+                        if (InitiativeConditionChoiceBox.getSelectionModel().getSelectedItem().equals(initiative.getCharacterName())) {
+                            if (initiative.getConditionTableView().getItems() != null) {
+                                populateConditionTable(initiative);
+                                break;
+                            }
+                        }
+                    }
+                }
+            });
+
+        //KONSTRUÉR CHOICE BOX
+        for (Initiative initiative :TableViewInitiative.getItems()) {
+            InitiativeConditionChoiceBox.getItems().add(initiative.getCharacterName());
+        }
+
     }
 
     private void initiatePreBuiltPlayerList() {
@@ -139,6 +233,22 @@ public class CombatController {
                     if(xmlh.getMonsterHashMap().containsKey(rowData.getCharacterName())) {
                         MonsterPopup monsterPopup = new MonsterPopup(xmlh, xmlh.getMonsterHashMap().get(rowData.getCharacterName()), globalController.getSpellController());
                         globalController.checkForDuplicatePopup(monsterPopup);
+                    }
+                }
+            });
+            return row ;
+        });
+    }
+
+    private void initiateGetSpellOnDoubleClick() {
+        ConditionTableView.setRowFactory(tv -> {
+            TableRow<Condition> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (! row.isEmpty()) ) {
+                    Condition rowData = row.getItem();
+                    if(xmlh.getSpellHashMap().containsKey(rowData.getConditionName().toLowerCase())) {
+                        SpellPopup spellPopup = new SpellPopup(xmlh.getSpellHashMap().get(rowData.getConditionName().toLowerCase()));
+                        globalController.checkForDuplicatePopup(spellPopup);
                     }
                 }
             });
@@ -202,9 +312,9 @@ public class CombatController {
                  }
                  }
                  */
+                InitializeInitiativeChoiceBox();
             }
             TableViewInitiative.refresh();
-
         });
     }
 
@@ -237,18 +347,16 @@ public class CombatController {
             initiativeSelected = TableViewInitiative.getSelectionModel().getSelectedItems();
             initiativeSelected.forEach(allInitiatives::remove);
             forceSortColumn(sortOrder);
+            TableViewInitiative.refresh();
+            InitializeInitiativeChoiceBox();
         });
     }
 
     private void initiateAddButton() {
         ButtonAddInitiative.setOnAction(e -> {
             if(!TextFieldDex.getText().isEmpty() && !TextFieldName.getText().isEmpty() && !TextFieldRoll.getText().isEmpty()){
-                Initiative initiative = new Initiative();
-                initiative.setCharacterName(TextFieldName.getText());
-                initiative.setDexScore(Integer.parseInt(TextFieldDex.getText()));
-                initiative.setExtraNotes(TextFieldAdditionalNotes.getText());
-                initiative.setInitiativeRoll(TextFieldRoll.getText());
-                initiative.calcFinalInitiative();
+                Initiative initiative = new Initiative(TextFieldName.getText(),TextFieldRoll.getText(),TextFieldAdditionalNotes.getText(),Integer.parseInt(TextFieldDex.getText()));
+
                 /**
                  * HER ER finalInitiative LAGT TIL FOR LETHEDENS SKYLD. SKAL HAVE BEDRE FIX!
                  *
@@ -274,6 +382,7 @@ public class CombatController {
 
                 TableViewInitiative.refresh();
                 checkForDuplication();
+                InitializeInitiativeChoiceBox();
             }
             else{
                 //ERSTART MED POPUP ERROR
@@ -283,8 +392,7 @@ public class CombatController {
     }
 
     private void checkForDuplication() {
-        /**
-
+/**
         int i = 0;
         TableRow<Initiative> prevRow = null;
         for (Node n: TableViewInitiative.lookupAll("TableRow")) {
@@ -340,27 +448,28 @@ public class CombatController {
             }
         }
     }
-    private void InitializeSearchBar() {
+
+    private void InitializeMonsterSearchBar() {
         ArrayList<String> monsterNames = new ArrayList<>();
         TextFields.bindAutoCompletion(monsterSearchBar, monsterNames);
 
             for (Monster monster: monsters) {
                 monsterNames.add(monster.getInfo().getName());
             }
-            bindAutoComplete(monsterNames);
+            bindAutoCompleteMonster(monsterNames);
     }
 
-    private void bindAutoComplete(ArrayList<String> monsterNames){
-        if(autoCompletionBinding != null) {
-            autoCompletionBinding.dispose();
+    private void bindAutoCompleteMonster(ArrayList<String> monsterNames){
+        if(autoCompletionBindingMonster != null) {
+            autoCompletionBindingMonster.dispose();
         }
-        autoCompletionBinding = TextFields.bindAutoCompletion(monsterSearchBar, monsterNames);
-        autoCompletionBinding.setOnAutoCompleted(event ->
-                handleCompletion(event.getCompletion()));
+        autoCompletionBindingMonster = TextFields.bindAutoCompletion(monsterSearchBar, monsterNames);
+        autoCompletionBindingMonster.setOnAutoCompleted(event ->
+                handleMonsterCompletion(event.getCompletion()));
 
     }
 
-    private void handleCompletion(String s) {
+    private void handleMonsterCompletion(String s) {
         if(xmlh.getMonsterHashMap().containsKey(s)){
             Monster monster = xmlh.getMonsterHashMap().get(s);
             TextFieldName.clear();
@@ -372,6 +481,73 @@ public class CombatController {
             ButtonAddInitiative.fire();
             monsterSearchBar.clear();
         }
+    }
+
+    private void bindAutoCompleteSpellsAndConditions(ArrayList<String> spellNames){
+        if(autoCompletionBindingSpellsAndConditions != null) {
+            autoCompletionBindingSpellsAndConditions.dispose();
+        }
+        autoCompletionBindingSpellsAndConditions = TextFields.bindAutoCompletion(InitiativeConditionOrSpellSearchBar, spellNames);
+        autoCompletionBindingSpellsAndConditions.setOnAutoCompleted(event ->
+                handleSpellAndConditionCompletion(event.getCompletion()));
+
+    }
+
+    /**
+     * Lægger en condition i det specifikke initiativs ConditionTableView.
+     * For at finde det initiativ vi gerne vil have er vi nødt til at løbe dem igennem et for-loop indtil vi rammer
+     * initiativet ved navn s.
+     * Så checkes der for om conditionen ligger i tableViewet i forvejen.
+     * Hvis ikke, lægges conditionen til initiativ objektet.
+     * @param s Laver en ny condition på baggrund af s, hvis den den condition ikke ligger i listen i forvejen.
+     */
+    public void handleSpellAndConditionCompletion(String s) {
+            TableViewInitiative.getItems().forEach(initiative -> {
+                if(!InitiativeConditionChoiceBox.getSelectionModel().isEmpty()){
+                    if(InitiativeConditionChoiceBox.getSelectionModel().getSelectedItem().equals(initiative.getCharacterName())) {
+                            Condition condition = new Condition();
+                            condition.setConditionName(s);
+                            boolean notHasCondition = true;
+                        for (Object obj: initiative.getConditionTableView().getItems()) {
+                            Condition initiativeCondition = (Condition) obj;
+                            if(initiativeCondition.getConditionName().equals(s)){
+                                notHasCondition = false;
+                                break;
+                            }
+                        }
+                        if(notHasCondition) {
+                            initiative.getConditionTableView().getItems().add(condition);
+                            populateConditionTable(initiative);
+                        }
+                    }
+                }
+                else System.out.println("LOL");
+            });
+            InitiativeConditionOrSpellSearchBar.clear();
+    }
+
+    private void populateConditionTable(Initiative initiative) {
+        ConditionTableView.getItems().clear();
+        for (Object obj:initiative.getConditionTableView().getItems()) {
+            Condition c = (Condition) obj;
+            ConditionTableView.getItems().add(c);
+        }
+    }
+
+
+    private void InitializeSpellOrConditionSearchBar() {
+        ArrayList<String> spellAndConditionNames = new ArrayList<>();
+        TextFields.bindAutoCompletion(InitiativeConditionOrSpellSearchBar, spellAndConditionNames);
+
+        for (String s: conditions) {
+            spellAndConditionNames.add(s);
+        }
+        for (Spell spell : spells) {
+            spellAndConditionNames.add(spell.getName());
+        }
+        bindAutoCompleteSpellsAndConditions(spellAndConditionNames);
+
+
     }
 
 }

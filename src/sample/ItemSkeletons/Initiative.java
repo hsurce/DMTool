@@ -1,5 +1,10 @@
 package sample.ItemSkeletons;
 
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,6 +17,8 @@ public class Initiative {
     private Integer finalInitiative;
     private Pattern p;
     private Matcher m;
+    private TableView conditionTableView;
+    private TableView spellConditionTableView;
 
     public Initiative(){
         this.characterName = "";
@@ -26,7 +33,12 @@ public class Initiative {
         this.extraNotes = extranotes;
         this.dexScore = dexscore;
         calcFinalInitiative();
+        this.conditionTableView = new TableView<Condition>();
+        TableColumn conditionCol = new TableColumn<>();
+        conditionCol.setCellValueFactory(new PropertyValueFactory<Condition, String>("conditionName"));
+        conditionTableView.getColumns().add(conditionCol);
     }
+
 
     public String getCharacterName() {
         return characterName;
@@ -81,5 +93,9 @@ public class Initiative {
 
     public void setFinalInitiative(Integer finalInitiative) {
         this.finalInitiative = finalInitiative;
+    }
+
+    public TableView getConditionTableView() {
+        return conditionTableView;
     }
 }

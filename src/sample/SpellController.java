@@ -261,6 +261,9 @@ public class SpellController {
 
     public void handleCompletion(String s) {
 
+        /**
+         * HUSK AT VI EVALUERER PÅ BAGGRUND AF LOWERCASE ALTID PÅ SPELLS!
+         */
         if(xmlh.getSpellHashMap().containsKey(s.toLowerCase())){
             Spell spell = xmlh.getSpellHashMap().get(s.toLowerCase());
             System.out.println("YO!");
