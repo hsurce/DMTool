@@ -9,6 +9,7 @@ import sample.ItemSkeletons.Initiative;
 
 public class CombatPopupInitiativeListController {
 
+
     @FXML
     public ScrollPane PopupScrollPane;
 

@@ -14,8 +14,10 @@ import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.TextFields;
+import sample.Popups.SpellPopup;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 public class SpellController {
@@ -25,10 +27,12 @@ public class SpellController {
     private ArrayList<Spell> spells;
     private ArrayList<Spell> filteredSpellList;
     private AutoCompletionBinding<String> autoCompletionBinding;
-    ArrayList<String> schoolPool = new ArrayList<>();
+    private GlobalController globalController;
 
-    public void Initialize(XMLHandler xmlh){
-        this.xmlh = xmlh;
+    public void initialize(GlobalController globalController){
+        this.globalController = globalController;
+        this.xmlh = globalController.getXmlh();
+
         spells = new ArrayList(xmlh.getSpellHashMap().values());
         Collections.sort(spells, (item, t1) -> {
             String s1 = item.getName();
@@ -40,7 +44,6 @@ public class SpellController {
         filteredSpellList = new ArrayList<>();
         setButtons();
         InitializeSearchBar();
-        populateSchoolList();
 
     }
 
@@ -68,30 +71,38 @@ public class SpellController {
     private void Filter(){
         filteredSpellList.clear();
         boolean isFilteredSpell = false;
+        ArrayList tempLevelFilter = new ArrayList();
         for(Spell spell: spells){
-            if(levelFilter.contains(spell.getLevel()+"") || levelFilter.isEmpty()) {
-                for(String string: spell.getClasses()){
-                    String[] word = string.split(" ");
+            if(levelFilter.isEmpty()){
+                tempLevelFilter.addAll(Arrays.asList(new String[]{"0","1","2","3","4","5","6","7","8","9"}));
+            }
+            else tempLevelFilter = levelFilter;
 
-                    if(classFilter.contains(word[0]) && !string.startsWith(" ")){
-                        isFilteredSpell = true;
+            if(tempLevelFilter.contains(spell.getLevel()+"")) {
+                if (classFilter.isEmpty()) {
+                    isFilteredSpell = true;
+                } else {
+                    for (String string : spell.getClasses()) {
+                        String[] word = string.split(" ");
 
-                    }
-                    else if(word.length > 1){
-                        if(classFilter.contains(word[1])){
+                        if (classFilter.contains(word[0]) && !string.startsWith(" ")) {
                             isFilteredSpell = true;
+
+                        } else if (word.length > 1) {
+                            if (classFilter.contains(word[1])) {
+                                isFilteredSpell = true;
+                            }
                         }
                     }
-                    }
                 }
-            if(isFilteredSpell){
-                filteredSpellList.add(spell);
-                isFilteredSpell = false;
+                if (isFilteredSpell) {
+                    filteredSpellList.add(spell);
+                    isFilteredSpell = false;
+                }
             }
 
         }
         InitializeSearchBar();
-        System.out.println(filteredSpellList);
     }
 
     /**
@@ -253,215 +264,10 @@ public class SpellController {
         if(xmlh.getSpellHashMap().containsKey(s.toLowerCase())){
             Spell spell = xmlh.getSpellHashMap().get(s.toLowerCase());
             System.out.println("YO!");
-            BuildSpellPopUp(spell);
+            SpellPopup spellPopup = new SpellPopup(spell);
+            globalController.checkForDuplicatePopup(spellPopup);
+
             SpellSearchBar.clear();
         }
-    }
-
-    public void BuildSpellPopUp(Spell spell) {
-        GridPane gridPane = new GridPane();
-        gridPane.setMaxWidth(600);
-        Label focusLabel = new Label();
-        int counter = 0;
-/**
- * HERFRA BLIVER ET HELT POPUP VINDUE KONSTRUERET PÅ BAGGRUND AF VÆRDIER I SPELL.
- */
-        if(!spell.getName().isEmpty()) {
-
-            Label name = new Label("\n"+spell.getName());
-            focusLabel = name;
-            name.setFont(Font.font("Apple Braille", 20));
-            name.setStyle("-fx-text-fill: red");
-            gridPane.add(name, 0,counter,1,1);
-            counter++;
-        }
-        if(!spell.getSchool().isEmpty()) {
-
-            String levelName = "";
-            String school = "";
-            boolean match = false;
-            switch(spell.getLevel()) {
-                case 0: levelName = "Cantrip";
-                        match = true;
-                        break;
-                case 1: levelName = "1st-level";
-                        match = true;
-                        break;
-                case 2: levelName = "2nd-level";
-                        match = true;
-                        break;
-                case 3: levelName = "3rd-level";
-                        match = true;
-                        break;
-            }
-            if(match == false){
-                levelName = spell.getLevel()+"th-level";
-            }
-            for (String s: schoolPool) {
-
-                if(Character.toString(s.charAt(0)).equals(Character.toString(spell.getSchool().charAt(0)))){
-                    if(spell.getSchool().length() > 1) {
-                        if (Character.toString(s.charAt(1)).equalsIgnoreCase(Character.toString(spell.getSchool().charAt(1)))) {
-                            school = s;
-                        }
-                    }
-                    else school = s;
-                }
-            }
-            Label levelAndSchool = new Label(levelName + " " + school);
-            levelAndSchool.setFont(Font.font("Apple Braille", FontPosture.ITALIC, 16));
-            gridPane.add(levelAndSchool,0,counter,1,1);
-            counter++;
-        }
-        if(!spell.getTime().isEmpty()) {
-            TextFlow timeFlow = new TextFlow();
-            Text text1 = new Text("Casting Time: ");
-            text1.setStyle("-fx-font-weight: bold");
-
-            Text text2 = new Text(spell.getTime());
-            text2.setStyle("-fx-font-weight: regular");
-            timeFlow.getChildren().addAll(text1,text2);
-
-            gridPane.add(timeFlow,0,counter,1,1);
-            counter++;
-        }
-        if(!spell.getRange().isEmpty()) {
-            TextFlow rangeFlow = new TextFlow();
-            Text text1 = new Text("Range: ");
-            text1.setStyle("-fx-font-weight: bold");
-
-            Text text2 = new Text(spell.getRange());
-            text2.setStyle("-fx-font-weight: regular");
-            rangeFlow.getChildren().addAll(text1,text2);
-
-            gridPane.add(rangeFlow,0,counter,1,1);
-            counter++;
-        }
-        if(!spell.getComponents().isEmpty()) {
-            TextFlow componentFlow = new TextFlow();
-            Text text1 = new Text("Components: ");
-            text1.setStyle("-fx-font-weight: bold");
-
-            String concatComponents = "";
-            for (String s: spell.getComponents()) {
-                concatComponents = concatComponents + s;
-            }
-            Text text2 = new Text(concatComponents);
-            text2.setStyle("-fx-font-weight: regular");
-            componentFlow.getChildren().addAll(text1,text2);
-
-            gridPane.add(componentFlow,0,counter,1,1);
-            counter++;
-        }
-        if(!spell.getDuration().isEmpty()) {
-            TextFlow durationFlow = new TextFlow();
-            Text text1 = new Text("Duration: ");
-            text1.setStyle("-fx-font-weight: bold");
-
-            Text text2 = new Text(spell.getDuration());
-            text2.setStyle("-fx-font-weight: regular");
-            durationFlow.getChildren().addAll(text1,text2);
-
-            gridPane.add(durationFlow,0,counter,1,1);
-            counter++;
-        }
-        if(!spell.getClasses().isEmpty()) {
-            TextFlow classesFlow = new TextFlow();
-            Text text1 = new Text("Classes: ");
-            text1.setStyle("-fx-font-weight: bold");
-
-            String concatClasses = "";
-            for (String s: spell.getClasses()) {
-                concatClasses = concatClasses + s;
-            }
-            Text text2 = new Text(concatClasses);
-            text2.setStyle("-fx-font-weight: regular");
-            classesFlow.getChildren().addAll(text1,text2);
-
-            gridPane.add(classesFlow,0,counter,1,1);
-            counter++;
-        }
-        if(!spell.getTexts().isEmpty()) {
-            for (String s: spell.getTexts()) {
-                Label textLabel = new Label("\n"+s);
-                textLabel.setWrapText(true);
-                gridPane.add(textLabel,0,counter,1,1);
-                counter++;
-            }
-        }
-        if(!spell.getRolls().isEmpty()){
-            counter++;
-            ButtonBar buttonBar = new ButtonBar();
-            for (SpellHitDie shd: spell.getRolls()) {
-                String roll;
-                String bonus = "";
-                if(shd.getBonus()<0) bonus = "+"+shd.getBonus();
-
-                roll = "\n"+shd.getDieAmount()+"d"+shd.getDieSize()+bonus;
-
-                Button rollButton = new Button("roll: " + roll);
-                rollButton.setFocusTraversable(false);
-                rollButton.setOnAction(e -> {
-                    System.out.println("hej" + roll);
-                });
-                buttonBar.getButtons().add(rollButton);
-            }
-
-            gridPane.add(buttonBar, 0, counter, 1 ,1);
-
-        }
-
-
-
-        ScrollPane scrollPane = new ScrollPane();
-        scrollPane.setContent(gridPane);
-        //scrollPane.setMaxWidth(800);
-        scrollPane.setMaxHeight(1000);
-        scrollPane.setHvalue(0);
-        scrollPane.setVvalue(0);
-        scrollPane.setHmax(1);
-        scrollPane.setVmax(1);
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-
-        gridPane.setPrefWidth(600);
-        gridPane.setScaleX(scrollPane.getScaleX());
-        scrollPane.setFitToWidth(true);
-        //BorderPane borderPane = new BorderPane(scrollPane);
-
-/**
- scrollPane.setScaleX(borderPane.getScaleX());
- scrollPane.setScaleY(borderPane.getScaleY());
- */
-        ColumnConstraints columnConstraints = new ColumnConstraints();
-        columnConstraints.setHgrow(Priority.ALWAYS);
-        columnConstraints.setFillWidth(true);
-        gridPane.getColumnConstraints().add(columnConstraints);
-/**
- borderPane.setScaleX(scrollPane.getScaleX());
- borderPane.setScaleY(scrollPane.getScaleY());
- borderPane.setMaxHeight(1000);
- */
-
-        Stage stage = new Stage();
-        stage.setTitle(spell.getName());
-        Scene scene = new Scene(scrollPane, 800, 600);
-        /**
-         borderPane.setPadding(new Insets(0,0,0,0));
-         borderPane.prefHeightProperty().bind(scene.heightProperty());
-         borderPane.prefWidthProperty().bind(scene.widthProperty());
-         */
-        stage.setScene(scene);
-        stage.show();
-    }
-    public void populateSchoolList(){
-        schoolPool.add("Abjuration");
-        schoolPool.add("Conjuration");
-        schoolPool.add("Enchantment");
-        schoolPool.add("Evocation");
-        schoolPool.add("Divination");
-        schoolPool.add("Illusion");
-        schoolPool.add("Necromancy");
-        schoolPool.add("Transmutation");
     }
 }

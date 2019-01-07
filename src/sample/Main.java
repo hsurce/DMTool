@@ -10,44 +10,47 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import sample.Popups.Popup;
 
 import java.io.IOException;
 import java.net.URL;
 import java.security.CodeSource;
+import java.util.HashSet;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class Main extends Application {
+
+
     // Controllers
-    LoginController loginController;
-    DefaultController defaultController;
-    CombatController combatController;
-    MonsterController monsterController;
-    SpellController spellController;
-    ItemController itemController;
-    MagicItemController magicItemController;
-    NameGeneratorController nameGeneratorController;
-    boolean hasCombat = false;
+    private LoginController loginController;
+    private DefaultController defaultController;
+
+    private CombatController combatController;
+    private MonsterController monsterController;
+    private SpellController spellController;
+    private ItemController itemController;
+    private MagicItemController magicItemController;
+    private NameGeneratorController nameGeneratorController;
     // Creating a double, to record and calculate frame x,y coordinates
     private double x,y;
     private double positionX = 0;
     private double positionY = 0;
-    XMLHandler xmlh;
+    private XMLHandler xmlh;
+    private GlobalController globalController;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         try{
             xmlh = new XMLHandler();
-            /**
-            System.out.println(xmlh.getMonsterHashMap());
-            System.out.println(xmlh.getSpellHashMap());
-             */
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("XMLFiles/LoginLayout.fxml"));
             Parent loginroot = fxmlLoader.load();
             loginController = fxmlLoader.getController();
 
             //LOAD af alle FXML filer.
             loadXMLFiles();
+            globalController = new GlobalController(xmlh,combatController,monsterController,spellController,itemController,magicItemController, nameGeneratorController);
+            initializeControllers();
             primaryStage.setScene(new Scene(loginroot));
             primaryStage.initStyle(StageStyle.UNDECORATED);
             dragWindow(loginroot, primaryStage);
@@ -85,122 +88,13 @@ public class Main extends Application {
         }
     }
 
-    public void defaultScreen(Stage primaryStage) throws Exception {
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("XMLFiles/DefaultLayout.fxml"));
-        Parent defaultroot = loader.load();
-        defaultController = (DefaultController)loader.getController();
-        Button monsterButton = defaultController.MonsterButton;
-        monsterButton.setOnAction(e -> {
-            try{
-                monsterButtonClicked(primaryStage);
-            }
-            catch(Exception e1) {
-                e1.printStackTrace();
-            }
-        });
-        Button combatButton = defaultController.CombatButton;
-        combatButton.setOnAction(e -> {
-            try{
-                CombatButtonClicked();
-            }
-            catch(Exception e1) {
-                e1.printStackTrace();
-            }
-        });
-        primaryStage.setScene(new Scene(defaultroot));
-        dragWindow(defaultroot, primaryStage);
-        System.out.println("Login Succesful.");
-        if(positionY == 0 && positionX == 0){
-            primaryStage.centerOnScreen();
-        }
-        else{
-            primaryStage.setX(positionX);
-            primaryStage.setY(positionY);
-        }
-// SPELL BUTTON
-        Button spellButton = defaultController.SpellButton;
-        spellButton.setOnAction(e -> {
-            try{
-                spellButtonClicked(primaryStage);
-            }
-            catch(Exception e1) {
-                e1.printStackTrace();
-            }
-        });
-
-        // ITEM BUTTON
-        Button itemButton = defaultController.ItemsButton;
-        itemButton.setOnAction(e -> {
-            try{
-                itemButtonClicked(primaryStage);
-            }
-            catch(Exception e1) {
-                e1.printStackTrace();
-            }
-        });
-
-        // MAGIC ITEM BUTTON
-        Button magicItemButton = defaultController.MagicItemsButton;
-        magicItemButton.setOnAction(e -> {
-            try{
-                magicItemButtonClicked(primaryStage);
-            }
-            catch(Exception e1) {
-                e1.printStackTrace();
-            }
-        });
-
-        // NAME GENERATOR BUTTON
-        Button nameGeneratorButton = defaultController.NameGeneratorButton;
-        nameGeneratorButton.setOnAction(e -> {
-            try{
-                nameGeneratorButtonClicked(primaryStage);
-            }
-            catch(Exception e1) {
-                e1.printStackTrace();
-            }
-        });
-    }
-
-    private void CombatButtonClicked() throws Exception {
-        combat();
-    }
-
-    private void combat() throws IOException {
-
-        defaultController.splitPane.getItems().set(1,combatController.content);
-    }
-
-    public void monster() throws Exception {
-
-        monsterController.Initialize(xmlh, this);
-        defaultController.splitPane.getItems().set(1,monsterController.content);
-    }
-
-
-    public void spell() throws Exception{
-
-        spellController.Initialize(xmlh);
-        defaultController.splitPane.getItems().set(1,spellController.content);
-    }
-
-    public void items() throws Exception{
-
-        defaultController.splitPane.getItems().set(1,itemController.content);
-    }
-
-    public void magicItems() throws Exception{
-
-        defaultController.splitPane.getItems().set(1,magicItemController.content);
-
-    }
-
-    public void nameGenerator() throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("XMLFiles/NameGeneratorLayout.fxml"));
-        Parent namegeneratorroot = loader.load();
-        nameGeneratorController = (NameGeneratorController)loader.getController();
-        defaultController.splitPane.getItems().set(1,nameGeneratorController.content);
+    private void initializeControllers() {
+        nameGeneratorController.initialize(globalController);
+        monsterController.initialize(globalController);
+        spellController.initialize(globalController);
+        combatController.initialize(globalController);
+        itemController.initialize(globalController);
+        magicItemController.initialize(globalController);
     }
 
     public void proceedButtonClicked(Stage combatStage) throws Exception {
@@ -214,21 +108,6 @@ public class Main extends Application {
         else System.out.println("Login Failed - Wrong username/password.");
     }
 
-    public void monsterButtonClicked(Stage monsterStage) throws Exception {
-        monster();
-    }
-    public void spellButtonClicked(Stage spellStage) throws Exception {
-        spell();
-    }
-    public void itemButtonClicked(Stage itemStage) throws Exception {
-        items();
-    }
-    public void magicItemButtonClicked(Stage magicItemStage) throws Exception {
-        magicItems();
-    }
-    public void nameGeneratorButtonClicked(Stage nameGeneratorStage) throws Exception {
-        nameGenerator();
-    }
 
     public void dragWindow(Parent p, Stage primaryStage){
         // Get x,y coordinates based on MousePressed
@@ -248,28 +127,54 @@ public class Main extends Application {
     }
     private void loadXMLFiles() throws IOException {
 
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("XMLFiles/NameGeneratorLayout.fxml"));
+        Parent namegeneratorroot = loader.load();
+        nameGeneratorController = (NameGeneratorController)loader.getController();
+
 
         FXMLLoader monsterLoader = new FXMLLoader(getClass().getResource("XMLFiles/MonsterLayout.fxml"));
         Parent monsterRoot = monsterLoader.load();
         monsterController = (MonsterController)monsterLoader.getController();
 
+
         FXMLLoader combatLoader = new FXMLLoader(getClass().getResource("XMLFiles/CombatLayout.fxml"));
         Parent combatRoot = combatLoader.load();
         combatController = (CombatController) combatLoader.getController();
-        combatController.initialize(monsterController, xmlh);
+
 
         FXMLLoader spellLoader = new FXMLLoader(getClass().getResource("XMLFiles/SpellLayout.fxml"));
         Parent spellRoot = spellLoader.load();
         spellController = (SpellController)spellLoader.getController();
-        spellController.Initialize(xmlh);
+
 
         FXMLLoader itemLoader = new FXMLLoader(getClass().getResource("XMLFiles/ItemLayout.fxml"));
         Parent itemRoot = itemLoader.load();
         itemController = (ItemController)itemLoader.getController();
 
+
         FXMLLoader magicItemLoader = new FXMLLoader(getClass().getResource("XMLFiles/MagicItemLayout.fxml"));
         Parent magicItemRoot = magicItemLoader.load();
         magicItemController = (MagicItemController)magicItemLoader.getController();
+
+
+    }
+
+    public void defaultScreen(Stage primaryStage) throws Exception {
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("XMLFiles/DefaultLayout.fxml"));
+        Parent defaultroot = loader.load();
+        defaultController = (DefaultController)loader.getController();
+        defaultController.initialize(globalController);
+
+        primaryStage.setScene(new Scene(defaultroot));
+        dragWindow(defaultroot, primaryStage);
+        System.out.println("Login Succesful.");
+        if (positionY == 0 && positionX == 0) {
+            primaryStage.centerOnScreen();
+        } else {
+            primaryStage.setX(positionX);
+            primaryStage.setY(positionY);
+        }
 
     }
 
@@ -277,7 +182,38 @@ public class Main extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
     public SpellController getSpellController(){
         return spellController;
     }
+
+    public LoginController getLoginController() {
+        return loginController;
+    }
+
+    public DefaultController getDefaultController() {
+        return defaultController;
+    }
+
+    public CombatController getCombatController() {
+        return combatController;
+    }
+
+    public MonsterController getMonsterController() {
+        return monsterController;
+    }
+
+    public ItemController getItemController() {
+        return itemController;
+    }
+
+    public MagicItemController getMagicItemController() {
+        return magicItemController;
+    }
+
+    public NameGeneratorController getNameGeneratorController() {
+        return nameGeneratorController;
+    }
+
+
 }
