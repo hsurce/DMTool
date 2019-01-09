@@ -23,43 +23,28 @@ public class XMLHandler {
         Start();
     }
 
-    public void Start() throws IOException {
+    public void Start() {
+        try {
+    /*
+     * Set the file name with it's
+     * specific location.
+     */
+            String tmpPath = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+            File tmpFile = new File(tmpPath);
+            tmpFile = tmpFile.getParentFile();
 
-
-        if(jarFile.isFile()) {  // Run with JAR file
-            final JarFile jar = new JarFile(jarFile);
-            final Enumeration<JarEntry> entries = jar.entries(); //gives ALL entries in jar
-            while (entries.hasMoreElements()) {
-                final String name = entries.nextElement().getName();
-                if (name.startsWith(path + "/")) { //filter according to the path
-                    if(name.endsWith(".bin")){
-                        System.out.println("hej");
-                        Parse(extract(name));
-                        count++;
-                    }
-                }
-            }
-            jar.close();
-        }
-        else { // Run with IDE
-            File folder = null;
-            try {
-                folder = new File(this.getClass().getResource("Directories/").toURI());
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-            }
-            File[] fileNames = new File[0];
-            if (folder != null) {
-                fileNames = folder.listFiles();
-            }
-            for (File file : fileNames) {
-                // if directory call the same method again
-                Parse(file);
+            String file = tmpFile.getAbsolutePath() + "/Directories/";
+            File absFile = new File(file);
+            for (File f : absFile.listFiles()) {
+                Parse(f);
                 count++;
-
             }
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
+
     public void Parse(File file) throws IOException {
 
         FileInputStream fis = null;
@@ -78,11 +63,11 @@ public class XMLHandler {
             }
 
             /**
-            int content;
-            while ((content = fis.read()) != -1) {
-                // convert to char and display it
-                System.out.print((char) content);
-            }
+             int content;
+             while ((content = fis.read()) != -1) {
+             // convert to char and display it
+             System.out.print((char) content);
+             }
              */
 
         } catch (IOException e) {

@@ -18,7 +18,7 @@
                 <Font name="Apple Chancery" size="48.0" />
             </font>
         </Label>
-      <TableView fx:id="TableViewInitiative" layoutX="37.0" layoutY="102.0" onKeyPressed="#HandleOnKeyPressed" prefHeight="564.0" prefWidth="477.0">
+      <TableView fx:id="TableViewInitiative" layoutX="37.0" layoutY="102.0" prefHeight="564.0" prefWidth="477.0">
         <columns>
           <TableColumn fx:id="TableViewName" prefWidth="225.60002517700195" style="-fx-alignment: CENTER;" text="Name"><cellValueFactory><PropertyValueFactory property="characterName" />
           </cellValueFactory></TableColumn>

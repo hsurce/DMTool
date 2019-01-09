@@ -4,6 +4,7 @@ import XMLHandler.XMLHandler;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -107,6 +108,7 @@ public class CombatController {
     @FXML
     public Button ClearConditionsButton;
 
+
     public void initialize(GlobalController globalController){
 
         initializeTableColumnSortability();
@@ -143,8 +145,33 @@ public class CombatController {
         initiateClearConditionsButton();
         initiateConditionDeleteButton();
         initiateInitiativeTableRowListener();
+        initiateTableViewKeyListener();
 
         forceSortColumn(sortOrder);
+    }
+
+    private void initiateTableViewKeyListener() {
+
+        TableViewInitiative.setOnKeyPressed(event -> {
+            switch (event.getCode()){
+                case DOWN:
+                    event.consume();
+                    if(TableViewInitiative.getSelectionModel().getSelectedItem() == TableViewInitiative.getItems().get(TableViewInitiative.getItems().size()-1)) {
+                        System.out.println("HE");
+                        TableViewInitiative.getSelectionModel().clearSelection();
+                        TableViewInitiative.getSelectionModel().selectFirst();
+                    }
+                    else TableViewInitiative.getSelectionModel().selectNext();
+                    break;
+                case ENTER:
+                    if (!TableViewInitiative.getSelectionModel().isEmpty()) {
+                        int j = TableViewInitiative.getSelectionModel().getFocusedIndex();
+                        ButtonNewRoll.fire();
+                        TableViewInitiative.getSelectionModel().clearAndSelect(j+1);
+                    }
+                    break;
+            }
+        });
     }
 
     /**
@@ -165,14 +192,10 @@ public class CombatController {
     }
 
     private void initiateInitiativeTableRowListener() {
+
         TableViewInitiative.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
-                if(TableViewInitiative.getItems().get(TableViewInitiative.getItems().size()-1) == newSelection){
-                    System.out.println(TableViewInitiative.getSelectionModel().getFocusedIndex());
-                    System.out.println("HE");
-                    int j = TableViewInitiative.getSelectionModel().getFocusedIndex();
-                    TableViewInitiative.getSelectionModel().clearAndSelect(j-2);
-                }
+                System.out.println(TableViewInitiative.getSelectionModel().getSelectedItem().getCharacterName());
                 InitiativeConditionChoiceBox.getSelectionModel().select(newSelection.getCharacterName());
             }
         });
@@ -344,6 +367,7 @@ public class CombatController {
                 initializeInitiativeChoiceBox();
             }
             TableViewInitiative.refresh();
+
         });
     }
 
@@ -468,16 +492,6 @@ public class CombatController {
 
     }
 
-    public void HandleOnKeyPressed(KeyEvent keyEvent) {
-        if(keyEvent.getCode() == KeyCode.ENTER) {
-            if (!TableViewInitiative.getSelectionModel().isEmpty()) {
-                int j = TableViewInitiative.getSelectionModel().getFocusedIndex();
-                ButtonNewRoll.fire();
-                //clearAndSelect
-                TableViewInitiative.getSelectionModel().clearAndSelect(j+1);
-            }
-        }
-    }
 
     private void initializeMonsterSearchBar() {
         ArrayList<String> monsterNames = new ArrayList<>();

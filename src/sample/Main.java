@@ -46,7 +46,7 @@ public class Main extends Application {
             loginController = fxmlLoader.getController();
 
             //LOAD af alle FXML filer.
-            loadXMLFiles();
+            loadFXMLFiles();
             globalController = new GlobalController(xmlh,combatController,monsterController,spellController,itemController,magicItemController, nameGeneratorController);
             initializeControllers();
             primaryStage.setScene(new Scene(loginroot));
@@ -123,7 +123,7 @@ public class Main extends Application {
 
         });
     }
-    private void loadXMLFiles() throws IOException {
+    private void loadFXMLFiles() throws IOException {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("XMLFiles/NameGeneratorLayout.fxml"));
         Parent namegeneratorroot = loader.load();

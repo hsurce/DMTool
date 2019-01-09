@@ -1,23 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.image.*?>
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.effect.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.effect.InnerShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<SplitPane fx:id="splitPane" dividerPositions="0.17156208277703605" prefHeight="768.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.DefaultController">
+<SplitPane fx:id="splitPane" dividerPositions="0.17156208277703605" prefHeight="768.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.DefaultController">
     <items>
         <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="320.0" style="-fx-background-color: #8B0000;">
             <children>
-                <Button fx:id="MonsterButton" layoutX="19.0" layoutY="275.0" mnemonicParsing="false" prefHeight="68.0" prefWidth="279.0" style="-fx-background-color: #8B0000; -fx-text-fill: #fffacd;" text="Monsters / NPCs" AnchorPane.leftAnchor="19.0" AnchorPane.rightAnchor="22.0">
+                <Button fx:id="MonsterButton" layoutX="21.0" layoutY="195.0" mnemonicParsing="false" prefHeight="68.0" prefWidth="279.0" style="-fx-background-color: #8B0000; -fx-text-fill: #fffacd;" text="Monsters / NPCs" AnchorPane.leftAnchor="21.0" AnchorPane.rightAnchor="20.0">
                     <effect>
                         <InnerShadow />
                     </effect>
@@ -25,13 +21,13 @@
                         <Font name="Apple Chancery" size="18.0" />
                     </font>
                 </Button>
-                <Label alignment="CENTER" contentDisplay="CENTER" layoutX="24.0" layoutY="129.0" prefHeight="67.0" prefWidth="202.0" text="High - Roll" textFill="LEMONCHIFFON" AnchorPane.leftAnchor="24.0" AnchorPane.rightAnchor="27.0">
+                <Label alignment="CENTER" contentDisplay="CENTER" layoutX="26.0" layoutY="49.0" prefHeight="67.0" prefWidth="202.0" text="High - Roll" textFill="LEMONCHIFFON" AnchorPane.leftAnchor="26.0" AnchorPane.rightAnchor="25.0">
                     <font>
                         <Font name="Apple Chancery" size="36.0" />
                     </font>
                 </Label>
                 <Label alignment="CENTER" layoutX="6.0" layoutY="720.0" prefHeight="32.0" prefWidth="251.0" style="-fx-text-fill: #FFFACD;" text=" by Jakob Roos &amp; Nicolai Simonsen" textAlignment="CENTER" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="-6.0" />
-            <Button fx:id="CombatButton" layoutX="19.0" layoutY="196.0" mnemonicParsing="false" prefHeight="68.0" prefWidth="279.0" style="-fx-background-color: #8B0000; -fx-text-fill: #fffacd;" text="Combat">
+            <Button fx:id="CombatButton" layoutX="21.0" layoutY="116.0" mnemonicParsing="false" prefHeight="68.0" prefWidth="279.0" style="-fx-background-color: #8B0000; -fx-text-fill: #fffacd;" text="Combat">
                <effect>
                   <InnerShadow />
                </effect>
@@ -39,7 +35,7 @@
                   <Font name="Apple Chancery" size="18.0" />
                </font>
             </Button>
-            <Button fx:id="SpellButton" layoutX="19.0" layoutY="354.0" mnemonicParsing="false" prefHeight="68.0" prefWidth="279.0" style="-fx-background-color: #8B0000; -fx-text-fill: #fffacd;" text="Spells">
+            <Button fx:id="SpellButton" layoutX="21.0" layoutY="274.0" mnemonicParsing="false" prefHeight="68.0" prefWidth="279.0" style="-fx-background-color: #8B0000; -fx-text-fill: #fffacd;" text="Spells">
                <effect>
                   <InnerShadow />
                </effect>
@@ -47,7 +43,7 @@
                   <Font name="Apple Chancery" size="18.0" />
                </font>
             </Button>
-            <Button fx:id="ItemsButton" layoutX="19.0" layoutY="432.0" mnemonicParsing="false" prefHeight="68.0" prefWidth="279.0" style="-fx-background-color: #8B0000; -fx-text-fill: #fffacd;" text="Items">
+            <Button fx:id="ItemsButton" layoutX="21.0" layoutY="352.0" mnemonicParsing="false" prefHeight="68.0" prefWidth="279.0" style="-fx-background-color: #8B0000; -fx-text-fill: #fffacd;" text="Items">
                <effect>
                   <InnerShadow />
                </effect>
@@ -55,7 +51,7 @@
                   <Font name="Apple Chancery" size="18.0" />
                </font>
             </Button>
-            <Button fx:id="MagicItemsButton" layoutX="19.0" layoutY="510.0" mnemonicParsing="false" prefHeight="68.0" prefWidth="279.0" style="-fx-background-color: #8B0000; -fx-text-fill: #fffacd;" text="Magic Items">
+            <Button fx:id="MagicItemsButton" layoutX="21.0" layoutY="430.0" mnemonicParsing="false" prefHeight="68.0" prefWidth="279.0" style="-fx-background-color: #8B0000; -fx-text-fill: #fffacd;" text="Magic Items">
                <effect>
                   <InnerShadow />
                </effect>
@@ -63,7 +59,15 @@
                   <Font name="Apple Chancery" size="18.0" />
                </font>
             </Button>
-            <Button fx:id="NameGeneratorButton" layoutX="19.0" layoutY="589.0" mnemonicParsing="false" prefHeight="68.0" prefWidth="279.0" style="-fx-background-color: #8B0000; -fx-text-fill: #fffacd;" text="Name Generator">
+            <Button fx:id="NameGeneratorButton" layoutX="21.0" layoutY="509.0" mnemonicParsing="false" prefHeight="68.0" prefWidth="279.0" style="-fx-background-color: #8B0000; -fx-text-fill: #fffacd;" text="Name Generator">
+               <effect>
+                  <InnerShadow />
+               </effect>
+               <font>
+                  <Font name="Apple Chancery" size="18.0" />
+               </font>
+            </Button>
+            <Button fx:id="CreatCustomButton" layoutX="21.0" layoutY="588.0" mnemonicParsing="false" prefHeight="68.0" prefWidth="279.0" style="-fx-background-color: #8B0000; -fx-text-fill: #fffacd;" text="Create Custom">
                <effect>
                   <InnerShadow />
                </effect>
