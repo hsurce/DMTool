@@ -16,25 +16,20 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
-
 /**
  * Created by Jakob on 1/6/2019.
  */
 public class SpellPopup extends Popup {
-    ArrayList<String> schoolPool;
     int counter;
     GridPane gridPane;
 
     Spell spell;
 
     public SpellPopup(Spell spell){
-        schoolPool = new ArrayList<>();
         this.spell = spell;
         gridPane = new GridPane();
         gridPane.setMaxWidth(600);
         counter = 0;
-        populateSchoolList();
         BuildSpellPopUp(spell);
 
     }
@@ -112,7 +107,7 @@ public class SpellPopup extends Popup {
     public void buildSchool(){
 
         String levelName = "";
-        String school = "";
+        String school = spell.getSchool();
         boolean match = false;
         switch(spell.getLevel()) {
             case 0: levelName = "Cantrip";
@@ -131,17 +126,7 @@ public class SpellPopup extends Popup {
         if(match == false){
             levelName = spell.getLevel()+"th-level";
         }
-        for (String s: schoolPool) {
 
-            if(Character.toString(s.charAt(0)).equals(Character.toString(spell.getSchool().charAt(0)))){
-                if(spell.getSchool().length() > 1) {
-                    if (Character.toString(s.charAt(1)).equalsIgnoreCase(Character.toString(spell.getSchool().charAt(1)))) {
-                        school = s;
-                    }
-                }
-                else school = s;
-            }
-        }
         Label levelAndSchool = new Label(levelName + " " + school);
         levelAndSchool.setFont(Font.font("Apple Braille", FontPosture.ITALIC, 16));
         gridPane.add(levelAndSchool,0,counter,1,1);
@@ -204,9 +189,14 @@ public class SpellPopup extends Popup {
         Text text1 = new Text("Classes: ");
         text1.setStyle("-fx-font-weight: bold");
 
+        int count = 1;
         String concatClasses = "";
         for (String s: spell.getClasses()) {
-            concatClasses = concatClasses + s;
+            if(spell.getClasses().size() != count) {
+                concatClasses = concatClasses + s + ", ";
+                count++;
+            }
+            else concatClasses = concatClasses + s;
         }
         Text text2 = new Text(concatClasses);
         text2.setStyle("-fx-font-weight: regular");
@@ -230,31 +220,22 @@ public class SpellPopup extends Popup {
         for (SpellHitDie shd: spell.getRolls()) {
             String roll;
             String bonus = "";
-            if(shd.getBonus()<0) bonus = "+"+shd.getBonus();
+            if (shd != null) {
+                if (shd.getBonus() < 0) bonus = "+" + shd.getBonus();
 
-            roll = "\n"+shd.getDieAmount()+"d"+shd.getDieSize()+bonus;
+                roll = "\n" + shd.getDieAmount() + "d" + shd.getDieSize() + bonus;
 
-            Button rollButton = new Button("roll: " + roll);
-            rollButton.setFocusTraversable(false);
-            rollButton.setOnAction(e -> {
-                System.out.println("hej" + roll);
-            });
-            buttonBar.getButtons().add(rollButton);
+                Button rollButton = new Button("roll: " + roll);
+                rollButton.setFocusTraversable(false);
+                rollButton.setOnAction(e -> {
+                    System.out.println("hej" + roll);
+                });
+                buttonBar.getButtons().add(rollButton);
+            }
         }
-
-        gridPane.add(buttonBar, 0, counter, 1 ,1);
-
-    }
-
-    public void populateSchoolList(){
-        schoolPool.add("Abjuration");
-        schoolPool.add("Conjuration");
-        schoolPool.add("Enchantment");
-        schoolPool.add("Evocation");
-        schoolPool.add("Divination");
-        schoolPool.add("Illusion");
-        schoolPool.add("Necromancy");
-        schoolPool.add("Transmutation");
+        if(buttonBar != null) {
+            gridPane.add(buttonBar, 0, counter, 1, 1);
+        }
     }
 
     public GridPane getGridPane() {

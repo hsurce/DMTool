@@ -102,10 +102,14 @@ public class CombatController {
     public Button DeleteConditionButton;
 
     @FXML
+    public TableColumn<?, ?> TableViewRoll;
+
+    @FXML
     public Button ClearConditionsButton;
 
     public void initialize(GlobalController globalController){
 
+        initializeTableColumnSortability();
         TableViewOrder.setComparator(TableViewOrder.getComparator().reversed());
         TableViewInitiative.getSortOrder().add(TableViewOrder);
 
@@ -125,7 +129,6 @@ public class CombatController {
             return s1.compareToIgnoreCase(s2);
         });
 
-        initializeTableColumnSortability();
         initializeSpellOrConditionSearchBar();
         initializeMonsterSearchBar();
         initiateGetMonsterOnDoubleClick();
@@ -144,17 +147,32 @@ public class CombatController {
         forceSortColumn(sortOrder);
     }
 
+    /**
+     * Det virkede ikke at lave case-specific sortableFalse.
+     * Det her virkede, men er relativt obskurt.
+     * Der er 4 columns. 3 som er viste, men som ikke skal kunne sorteres på
+     * og 1 usynlig som bliver brugt som sortering.
+     */
     private void initializeTableColumnSortability() {
+        int count = 0;
+
         for (TableColumn column : TableViewInitiative.getColumns()) {
-            if (column.getId() != "TableViewOrder") {
-                //column.setSortable(false);
+            if(count < 3) {
+                column.setSortable(false);
             }
+            count++;
         }
     }
 
     private void initiateInitiativeTableRowListener() {
         TableViewInitiative.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
+                if(TableViewInitiative.getItems().get(TableViewInitiative.getItems().size()-1) == newSelection){
+                    System.out.println(TableViewInitiative.getSelectionModel().getFocusedIndex());
+                    System.out.println("HE");
+                    int j = TableViewInitiative.getSelectionModel().getFocusedIndex();
+                    TableViewInitiative.getSelectionModel().clearAndSelect(j-2);
+                }
                 InitiativeConditionChoiceBox.getSelectionModel().select(newSelection.getCharacterName());
             }
         });
@@ -455,6 +473,7 @@ public class CombatController {
             if (!TableViewInitiative.getSelectionModel().isEmpty()) {
                 int j = TableViewInitiative.getSelectionModel().getFocusedIndex();
                 ButtonNewRoll.fire();
+                //clearAndSelect
                 TableViewInitiative.getSelectionModel().clearAndSelect(j+1);
             }
         }

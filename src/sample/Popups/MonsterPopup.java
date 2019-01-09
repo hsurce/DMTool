@@ -431,12 +431,15 @@ public class MonsterPopup extends Popup {
             actionFlow.getChildren().addAll(text1,text2);
             gridPane.add(actionFlow,0,counter,1,1);
             counter++;
+            Button b;
+            if(attackAction.getHitDie() != null) {
+                b = new Button(attackAction.getHitDie().getDieAmount() + "d" +
+                        attackAction.getHitDie().getDieSize() + " + " + attackAction.getDamageBonus());
+                b.setFocusTraversable(false);
+                gridPane.add(b, 0, counter, 1, 1);
+                counter++;
+            }
 
-            Button b = new Button(attackAction.getHitDie().getDieAmount() + "d" +
-                    attackAction.getHitDie().getDieSize() + " + " + attackAction.getDamageBonus());
-            b.setFocusTraversable(false);
-            gridPane.add(b, 0, counter, 1,1);
-            counter++;
         }
     }
     private void buildLegendaryActions(){

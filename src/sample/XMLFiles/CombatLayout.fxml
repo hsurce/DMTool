@@ -24,7 +24,7 @@
           </cellValueFactory></TableColumn>
             <TableColumn fx:id="TableViewAdditionalNotes" prefWidth="145.5999755859375" style="-fx-alignment: CENTER;" text="Additional Notes"><cellValueFactory><PropertyValueFactory property="extraNotes" />
             </cellValueFactory></TableColumn>
-            <TableColumn prefWidth="104.80001220703127" style="-fx-alignment: CENTER;" text="Roll"><cellValueFactory><PropertyValueFactory property="initiativeRoll" />
+            <TableColumn fx:id="TableViewRoll" prefWidth="104.80001220703127" style="-fx-alignment: CENTER;" text="Roll"><cellValueFactory><PropertyValueFactory property="initiativeRoll" />
             </cellValueFactory></TableColumn>
             <TableColumn fx:id="TableViewOrder" prefWidth="75.0" text="Order" visible="false"><cellValueFactory><PropertyValueFactory property="finalInitiative" />
             </cellValueFactory></TableColumn>
