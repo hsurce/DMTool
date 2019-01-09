@@ -4,7 +4,7 @@ import XMLHandler.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.text.Text;
+import javafx.scene.layout.GridPane;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.TextFields;
 import sample.Popups.MonsterPopup;
@@ -20,10 +20,11 @@ public class MonsterController {
     private ArrayList<Monster> filteredMonsterList;
     private AutoCompletionBinding<String> autoCompletionBinding;
     private Main root2;
+    private boolean isAlwaysPopup = false;
 
     GlobalController globalController;
 
-    public void initialize(GlobalController globalController){
+    public void initialize(GlobalController globalController) {
 
         this.globalController = globalController;
         this.xmlh = globalController.getXmlh();
@@ -39,22 +40,77 @@ public class MonsterController {
         levelFilter = new ArrayList<>();
         filteredMonsterList = new ArrayList<>();
 
-        InitializeSearchBar();
-
+        initializeSearchBar();
+        initializeIsAlwaysPopupButton();
+        initializeMonsterChoiceBox();
+        initializeGenerateStatBlockButton();
+        initializeDeleteFromMonsterChoiceBoxButton();
+        initializeClearMonsterChoiceBoxButton();
     }
 
-    private void InitializeSearchBar() {
+    private void initializeClearMonsterChoiceBoxButton() {
+        ClearMonsterChoiceBoxButton.setOnAction(e -> {
+            MonsterScrollPane.setContent(null);
+            MonsterChoiceBox.getItems().clear();
+        });
+    }
+
+    private void initializeDeleteFromMonsterChoiceBoxButton() {
+        DeleteFromMonsterChoiceBoxButton.setOnAction(e ->{
+            if(MonsterChoiceBox.getItems().get(MonsterChoiceBox.getSelectionModel().getSelectedIndex()-1) != null){
+                int currentIndex = MonsterChoiceBox.getSelectionModel().getSelectedIndex();
+                MonsterChoiceBox.getItems().remove(MonsterChoiceBox.getSelectionModel().getSelectedItem());
+                MonsterChoiceBox.getSelectionModel().clearAndSelect(currentIndex-1);
+            }
+            else MonsterChoiceBox.getItems().remove(MonsterChoiceBox.getSelectionModel().getSelectedItem());
+        });
+    }
+
+    private void initializeGenerateStatBlockButton() {
+        GenerateStatBlockButton.setOnAction(e-> {
+            if(xmlh.getMonsterHashMap().containsKey(MonsterChoiceBox.getSelectionModel().getSelectedItem())) {
+                Monster monster = xmlh.getMonsterHashMap().get(MonsterChoiceBox.getSelectionModel().getSelectedItem());
+                MonsterPopup monsterPopup = new MonsterPopup(globalController.getXmlh(), monster, globalController.getSpellController());
+                globalController.checkForDuplicatePopup(monsterPopup);
+                monsterPopup.show();
+            }
+        });
+    }
+
+    private void initializeMonsterChoiceBox() {
+        MonsterChoiceBox.setOnAction(e ->{
+            if(xmlh.getMonsterHashMap().containsKey(MonsterChoiceBox.getSelectionModel().getSelectedItem())) {
+                Monster monster = xmlh.getMonsterHashMap().get(MonsterChoiceBox.getSelectionModel().getSelectedItem());
+                MonsterPopup monsterPopup = new MonsterPopup(globalController.getXmlh(), monster, globalController.getSpellController());
+                MonsterScrollPane.setContent(monsterPopup.getGridPane());
+                //MULIGVIS IKKE RELEVANT AT KALDE:
+                monsterPopup.closeStage();
+            }
+        });
+    }
+
+    private void initializeIsAlwaysPopupButton() {
+        IsAlwaysPopupToggle.setOnAction(e ->{
+            if(IsAlwaysPopupToggle.isSelected()){
+                isAlwaysPopup = true;
+            }
+            else isAlwaysPopup = false;
+        });
+    }
+
+    private void initializeSearchBar() {
         ArrayList<String> monsterNames = new ArrayList<>();
         TextFields.bindAutoCompletion(MonsterSearch, monsterNames);
-        if(filteredMonsterList.isEmpty()) {
-            for (Monster monster: monsters) {
+        if (filteredMonsterList.isEmpty()) {
+            for (Monster monster : monsters) {
                 monsterNames.add(monster.getInfo().getName());
             }
             bindAutoComplete(monsterNames);
         }
     }
-    private void bindAutoComplete(ArrayList<String> monsterNames){
-        if(autoCompletionBinding != null) {
+
+    private void bindAutoComplete(ArrayList<String> monsterNames) {
+        if (autoCompletionBinding != null) {
             autoCompletionBinding.dispose();
         }
         autoCompletionBinding = TextFields.bindAutoCompletion(MonsterSearch, monsterNames);
@@ -62,60 +118,55 @@ public class MonsterController {
                 handleCompletion(event.getCompletion()));
 
     }
+
     public void handleCompletion(String s) {
 
-        if(xmlh.getMonsterHashMap().containsKey(s)){
-            Monster monster = xmlh.getMonsterHashMap().get(s);
-            MonsterPopup monsterPopup = new MonsterPopup(xmlh,monster, globalController.getSpellController());
-            globalController.checkForDuplicatePopup(monsterPopup);
+        if (xmlh.getMonsterHashMap().containsKey(s) && isAlwaysPopup) {
             MonsterSearch.clear();
+            Monster monster = xmlh.getMonsterHashMap().get(s);
+            MonsterPopup monsterPopup = new MonsterPopup(xmlh, monster, globalController.getSpellController());
+            globalController.checkForDuplicatePopup(monsterPopup);
+            monsterPopup.show();
+        }
+        else if(xmlh.getMonsterHashMap().containsKey(s)){
+            MonsterSearch.clear();
+            MonsterChoiceBox.getItems().add(s);
+            MonsterChoiceBox.getSelectionModel().select(s);
         }
     }
 
     @FXML
-    public AnchorPane content;
+    private AnchorPane content;
 
     @FXML
-    private ChoiceBox<?> MonsterChoiceBox;
+    private ChoiceBox<String> MonsterChoiceBox;
 
     @FXML
     private TextField MonsterSearch;
 
     @FXML
-    private Button ButtonAddInitiative;
+    private Button AddInitiativeButton;
 
     @FXML
-    private Button ButtonGenerateStatBlock;
+    private Button GenerateStatBlockButton;
 
     @FXML
-    private Button ButtonShowImage;
+    private GridPane MonsterGridPane;
 
     @FXML
-    private Label LabelMonsterName;
+    private Button DeleteFromMonsterChoiceBoxButton;
 
     @FXML
-    private Text TextSizeTypeAlignment;
+    private Button ClearMonsterChoiceBoxButton;
 
     @FXML
-    private Text STRScore;
+    private ToggleButton IsAlwaysPopupToggle;
 
     @FXML
-    private Text DEXScore;
+    private ScrollPane MonsterScrollPane;
 
-    @FXML
-    private Text CONScore;
-
-    @FXML
-    private Text INTScore;
-
-    @FXML
-    private Text WISScore;
-
-    @FXML
-    private Text CHAScore;
-
-
-    public XMLHandler getXmlh(){
-        return this.xmlh;
+    public AnchorPane getContent() {
+        return content;
     }
 }
+

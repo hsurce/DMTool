@@ -12,7 +12,6 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.TextFields;
@@ -43,7 +42,7 @@ public class CombatController {
     private ArrayList<String> conditions;
 
     @FXML
-    public AnchorPane content;
+    private AnchorPane content;
 
     @FXML
     public Button ButtonNewRoll;
@@ -125,8 +124,8 @@ public class CombatController {
             return s1.compareToIgnoreCase(s2);
         });
 
-        InitializeSpellOrConditionSearchBar();
-        InitializeMonsterSearchBar();
+        initializeSpellOrConditionSearchBar();
+        initializeMonsterSearchBar();
         initiateGetMonsterOnDoubleClick();
         initiateGetSpellOnDoubleClick();
         initiateAddButton();
@@ -135,7 +134,7 @@ public class CombatController {
         initiateClearButton();
         initiateNewRollButton();
         initiatePreBuiltPlayerList();
-        InitializeInitiativeChoiceBox();
+        initializeInitiativeChoiceBox();
         initiateClearConditionsButton();
         initiateConditionDeleteButton();
         initiateInitiativeTableRowListener();
@@ -180,7 +179,7 @@ public class CombatController {
         });
     }
 
-    private void InitializeInitiativeChoiceBox() {
+    private void initializeInitiativeChoiceBox() {
         if(!InitiativeConditionChoiceBox.getItems().isEmpty()){
             InitiativeConditionChoiceBox.getItems().clear();
         }
@@ -233,6 +232,7 @@ public class CombatController {
                     if(xmlh.getMonsterHashMap().containsKey(rowData.getCharacterName())) {
                         MonsterPopup monsterPopup = new MonsterPopup(xmlh, xmlh.getMonsterHashMap().get(rowData.getCharacterName()), globalController.getSpellController());
                         globalController.checkForDuplicatePopup(monsterPopup);
+                        monsterPopup.show();
                     }
                 }
             });
@@ -249,6 +249,7 @@ public class CombatController {
                     if(xmlh.getSpellHashMap().containsKey(rowData.getConditionName().toLowerCase())) {
                         SpellPopup spellPopup = new SpellPopup(xmlh.getSpellHashMap().get(rowData.getConditionName().toLowerCase()));
                         globalController.checkForDuplicatePopup(spellPopup);
+                        spellPopup.show();
                     }
                 }
             });
@@ -312,7 +313,7 @@ public class CombatController {
                  }
                  }
                  */
-                InitializeInitiativeChoiceBox();
+                initializeInitiativeChoiceBox();
             }
             TableViewInitiative.refresh();
         });
@@ -348,7 +349,7 @@ public class CombatController {
             initiativeSelected.forEach(allInitiatives::remove);
             forceSortColumn(sortOrder);
             TableViewInitiative.refresh();
-            InitializeInitiativeChoiceBox();
+            initializeInitiativeChoiceBox();
         });
     }
 
@@ -382,7 +383,7 @@ public class CombatController {
 
                 TableViewInitiative.refresh();
                 checkForDuplication();
-                InitializeInitiativeChoiceBox();
+                initializeInitiativeChoiceBox();
             }
             else{
                 //ERSTART MED POPUP ERROR
@@ -449,7 +450,7 @@ public class CombatController {
         }
     }
 
-    private void InitializeMonsterSearchBar() {
+    private void initializeMonsterSearchBar() {
         ArrayList<String> monsterNames = new ArrayList<>();
         TextFields.bindAutoCompletion(monsterSearchBar, monsterNames);
 
@@ -535,7 +536,7 @@ public class CombatController {
     }
 
 
-    private void InitializeSpellOrConditionSearchBar() {
+    private void initializeSpellOrConditionSearchBar() {
         ArrayList<String> spellAndConditionNames = new ArrayList<>();
         TextFields.bindAutoCompletion(InitiativeConditionOrSpellSearchBar, spellAndConditionNames);
 
@@ -550,4 +551,7 @@ public class CombatController {
 
     }
 
+    public AnchorPane getContent() {
+        return content;
+    }
 }

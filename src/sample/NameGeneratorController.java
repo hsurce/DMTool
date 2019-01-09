@@ -11,7 +11,11 @@ public class NameGeneratorController {
     }
 
 
+    public AnchorPane getContent() {
+        return content;
+    }
+
     @FXML
-    public AnchorPane content;
+    private AnchorPane content;
 
 }

@@ -25,6 +25,7 @@ public class SpellPopup extends Popup {
     ArrayList<String> schoolPool;
     int counter;
     GridPane gridPane;
+
     Spell spell;
 
     public SpellPopup(Spell spell){
@@ -99,7 +100,6 @@ public class SpellPopup extends Popup {
 
 
         super.stage.setScene(scene);
-        super.stage.show();
     }
 
     public void buildName(){
@@ -218,6 +218,7 @@ public class SpellPopup extends Popup {
     public void buildTexts(){
         for (String s: spell.getTexts()) {
             Label textLabel = new Label("\n"+s);
+            textLabel.setFont(new Font(14));
             textLabel.setWrapText(true);
             gridPane.add(textLabel,0,counter,1,1);
             counter++;
@@ -254,5 +255,9 @@ public class SpellPopup extends Popup {
         schoolPool.add("Illusion");
         schoolPool.add("Necromancy");
         schoolPool.add("Transmutation");
+    }
+
+    public GridPane getGridPane() {
+        return gridPane;
     }
 }

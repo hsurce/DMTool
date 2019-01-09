@@ -97,33 +97,33 @@ public class DefaultController {
 
     public void nameGenerator() throws Exception {
 
-        this.splitPane.getItems().set(1, globalController.getNameGeneratorController().content);
+        this.splitPane.getItems().set(1, globalController.getNameGeneratorController().getContent());
     }
 
     private void combat() throws IOException {
 
-        this.splitPane.getItems().set(1, globalController.getCombatController().content);
+        this.splitPane.getItems().set(1, globalController.getCombatController().getContent());
     }
 
     public void monster() throws Exception {
 
-        this.splitPane.getItems().set(1, globalController.getMonsterController().content);
+        this.splitPane.getItems().set(1, globalController.getMonsterController().getContent());
     }
 
 
     public void spell() throws Exception{
 
-        this.splitPane.getItems().set(1, globalController.getSpellController().content);
+        this.splitPane.getItems().set(1, globalController.getSpellController().getContent());
     }
 
     public void items() throws Exception{
 
-        this.splitPane.getItems().set(1, globalController.getItemController().content);
+        this.splitPane.getItems().set(1, globalController.getItemController().getContent());
     }
 
     public void magicItems() throws Exception{
 
-        this.splitPane.getItems().set(1, globalController.getMagicItemController().content);
+        this.splitPane.getItems().set(1, globalController.getMagicItemController().getContent());
 
     }
     @FXML

@@ -1,0 +1,7 @@
+.scroll-pane .viewport {
+   -fx-background-image: url('/sample/ImageFiles/Spellbook.png');
+   -fx-background-position: center;
+   -fx-background-repeat: no-repeat;
+   -fx-background-size: 1000,1000;
+
+}

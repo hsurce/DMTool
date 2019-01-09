@@ -1,17 +1,10 @@
 package sample;
 
 import XMLHandler.Spell;
-import XMLHandler.SpellHitDie;
 import XMLHandler.XMLHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
-import javafx.stage.Stage;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.TextFields;
 import sample.Popups.SpellPopup;
@@ -28,11 +21,11 @@ public class SpellController {
     private ArrayList<Spell> filteredSpellList;
     private AutoCompletionBinding<String> autoCompletionBinding;
     private GlobalController globalController;
+    private boolean isAlwaysPopup = false;
 
     public void initialize(GlobalController globalController){
         this.globalController = globalController;
         this.xmlh = globalController.getXmlh();
-
         spells = new ArrayList(xmlh.getSpellHashMap().values());
         Collections.sort(spells, (item, t1) -> {
             String s1 = item.getName();
@@ -44,7 +37,64 @@ public class SpellController {
         filteredSpellList = new ArrayList<>();
         setButtons();
         InitializeSearchBar();
+        initializeIsAlwaysPopupButton();
+        initializeSpellChoiceBox();
+        initializeSpellGenerateStatBlockButton();
+        initializeDeleteFromSpellChoiceBoxButton();
+        initializeClearSpellChoiceBoxButton();
+    }
 
+    private void initializeClearSpellChoiceBoxButton() {
+        ClearSpellChoiceBoxButton.setOnAction(e ->{
+            SpellScrollPane.setContent(null);
+            SpellChoiceBox.getItems().clear();
+
+        });
+    }
+
+    private void initializeDeleteFromSpellChoiceBoxButton() {
+        DeleteFromSpellChoiceBoxButton.setOnAction(e ->{
+            if(SpellChoiceBox.getItems().get(SpellChoiceBox.getSelectionModel().getSelectedIndex()-1) != null){
+                int currentIndex = SpellChoiceBox.getSelectionModel().getSelectedIndex();
+                SpellChoiceBox.getItems().remove(SpellChoiceBox.getSelectionModel().getSelectedItem());
+                SpellChoiceBox.getSelectionModel().clearAndSelect(currentIndex-1);
+            }
+            else SpellChoiceBox.getItems().remove(SpellChoiceBox.getSelectionModel().getSelectedItem());
+        });
+    }
+
+    private void initializeSpellGenerateStatBlockButton() {
+        SpellGenerateStatBlockButton.setOnAction(e-> {
+            if(xmlh.getSpellHashMap().containsKey(SpellChoiceBox.getSelectionModel().getSelectedItem().toLowerCase())) {
+                Spell spell = xmlh.getSpellHashMap().get(SpellChoiceBox.getSelectionModel().getSelectedItem().toLowerCase());
+                SpellPopup spellPopup = new SpellPopup(spell);
+                globalController.checkForDuplicatePopup(spellPopup);
+                spellPopup.show();
+            }
+        });
+    }
+
+    private void initializeSpellChoiceBox() {
+        SpellChoiceBox.setOnAction(e ->{
+            if(SpellChoiceBox.getSelectionModel().getSelectedItem() != null) {
+                if (xmlh.getSpellHashMap().containsKey(SpellChoiceBox.getSelectionModel().getSelectedItem().toLowerCase())) {
+                    Spell spell = xmlh.getSpellHashMap().get(SpellChoiceBox.getSelectionModel().getSelectedItem().toLowerCase());
+                    SpellPopup spellPopup = new SpellPopup(spell);
+                    SpellScrollPane.setContent(spellPopup.getGridPane());
+                    //MULIGVIS IKKE RELEVANT AT KALDE:
+                    spellPopup.closeStage();
+                }
+            }
+        });
+    }
+
+    private void initializeIsAlwaysPopupButton() {
+        IsAlwaysPopupToggle.setOnAction(e ->{
+            if(IsAlwaysPopupToggle.isSelected()){
+                isAlwaysPopup = true;
+            }
+            else isAlwaysPopup = false;
+        });
     }
 
     private void InitializeSearchBar() {
@@ -142,8 +192,12 @@ public class SpellController {
         Filter();
     }
 
+    public AnchorPane getContent() {
+        return content;
+    }
+
     @FXML
-    public AnchorPane content;
+    private AnchorPane content;
 
     @FXML
     public TextField SpellSearchBar;
@@ -179,7 +233,22 @@ public class SpellController {
     public ToggleButton ninethToggleButton;
 
     @FXML
-    public ChoiceBox<?> SourceChoiceBox;
+    public ChoiceBox<String> SpellChoiceBox;
+
+    @FXML
+    private Button DeleteFromSpellChoiceBoxButton;
+
+    @FXML
+    private Button ClearSpellChoiceBoxButton;
+
+    @FXML
+    private Button SpellGenerateStatBlockButton;
+
+    @FXML
+    private ScrollPane SpellScrollPane;
+
+    @FXML
+    private ToggleButton IsAlwaysPopupToggle;
 
     @FXML
     public ToggleButton BardToggleButton;
@@ -204,6 +273,8 @@ public class SpellController {
 
     @FXML
     public ToggleButton WizardToggleButton;
+
+    @FXML
 
     private void setClassButtonAction(ToggleButton button){
         button.setOnAction(e -> {
@@ -264,13 +335,18 @@ public class SpellController {
         /**
          * HUSK AT VI EVALUERER PÅ BAGGRUND AF LOWERCASE ALTID PÅ SPELLS!
          */
-        if(xmlh.getSpellHashMap().containsKey(s.toLowerCase())){
+        if(xmlh.getSpellHashMap().containsKey(s.toLowerCase()) && isAlwaysPopup){
+            SpellSearchBar.clear();
             Spell spell = xmlh.getSpellHashMap().get(s.toLowerCase());
             System.out.println("YO!");
             SpellPopup spellPopup = new SpellPopup(spell);
             globalController.checkForDuplicatePopup(spellPopup);
-
+            spellPopup.show();
+        }
+        else if(xmlh.getSpellHashMap().containsKey(s.toLowerCase())){
             SpellSearchBar.clear();
+            SpellChoiceBox.getItems().add(s);
+            SpellChoiceBox.getSelectionModel().select(s);
         }
     }
 }

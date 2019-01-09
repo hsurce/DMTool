@@ -6,134 +6,34 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
 <AnchorPane fx:id="content" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.MonsterController">
     <children>
-        <Label layoutX="36.0" layoutY="58.0" text="Choose Monster / NPC">
+        <Label layoutX="40.0" layoutY="30.0" text="Choose Monster / NPC">
             <font>
                 <Font name="Apple Chancery" size="18.0" />
             </font>
         </Label>
-        <ChoiceBox fx:id="MonsterChoiceBox" layoutX="36.0" layoutY="93.0" prefHeight="35.0" prefWidth="191.0" />
+        <ChoiceBox fx:id="MonsterChoiceBox" layoutX="36.0" layoutY="56.0" prefHeight="35.0" prefWidth="191.0" />
         <Text layoutX="36.0" layoutY="199.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Size Type, Alignment" wrappingWidth="149.2060546875" />
         <TextField fx:id="MonsterSearch" alignment="CENTER" layoutX="745.0" layoutY="31.0" promptText="Search" />
-        <Button fx:id="ButtonAddInitiative" alignment="CENTER" contentDisplay="CENTER" layoutX="675.0" layoutY="724.0" mnemonicParsing="false" text="Add to Initiative List" />
         <Separator layoutX="20.0" layoutY="136.0" orientation="VERTICAL" prefHeight="579.0" prefWidth="4.0" />
         <Separator layoutX="23.0" layoutY="715.0" prefHeight="2.0" prefWidth="903.0" />
         <Separator layoutX="924.0" layoutY="136.0" orientation="VERTICAL" prefHeight="579.0" prefWidth="6.0" />
         <Separator layoutX="22.0" layoutY="135.0" prefHeight="2.0" prefWidth="903.0" />
-        <Button fx:id="ButtonGenerateStatBlock" alignment="CENTER" contentDisplay="CENTER" layoutX="523.0" layoutY="724.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="142.0" text="Generate Stat Block" />
-        <Button fx:id="ButtonShowImage" alignment="CENTER" contentDisplay="CENTER" layoutX="826.0" layoutY="724.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="128.0" text="Show JPEG/PNG" />
-        <ScrollPane layoutX="23.0" layoutY="136.0" prefHeight="579.0" prefWidth="903.0" vmax="1000.0">
-            <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="1200.0" prefWidth="902.0">
-                    <children>
-                        <Label fx:id="LabelMonsterName" layoutX="15.0" layoutY="14.0" prefHeight="25.0" prefWidth="183.0" text="Monster Name" textAlignment="CENTER" textFill="#82250a">
-                            <font>
-                                <Font name="Apple Braille" size="18.0" />
-                            </font>
-                        </Label>
-                        <Label layoutX="15.0" layoutY="85.0" prefHeight="25.0" prefWidth="70.0" text="Armor Class" textAlignment="CENTER" textFill="#82250a">
-                            <font>
-                                <Font name="Apple Braille" size="12.0" />
-                            </font>
-                        </Label>
-                        <Label layoutX="16.0" layoutY="105.0" prefHeight="25.0" prefWidth="54.0" text="Hit Points" textAlignment="CENTER" textFill="#82250a">
-                            <font>
-                                <Font name="Apple Braille" size="12.0" />
-                            </font>
-                        </Label>
-                        <Label layoutX="16.0" layoutY="125.0" prefHeight="25.0" prefWidth="38.0" text="Speed" textAlignment="CENTER" textFill="#82250a">
-                            <font>
-                                <Font name="Apple Braille" size="12.0" />
-                            </font>
-                        </Label>
-                        <Line endX="155.0" layoutX="117.0" layoutY="159.0" startX="-100.0" stroke="#82250a" strokeWidth="2.0" />
-                        <Label alignment="CENTER" layoutX="16.0" layoutY="170.0" prefHeight="25.0" prefWidth="32.0" text="STR" textAlignment="CENTER" textFill="#82250a">
-                            <font>
-                                <Font name="Apple Braille" size="12.0" />
-                            </font>
-                        </Label>
-                        <Label alignment="CENTER" layoutX="61.0" layoutY="170.0" prefHeight="25.0" prefWidth="32.0" text="DEX" textAlignment="CENTER" textFill="#82250a">
-                            <font>
-                                <Font name="Apple Braille" size="12.0" />
-                            </font>
-                        </Label>
-                        <Label alignment="CENTER" layoutX="106.0" layoutY="170.0" prefHeight="25.0" prefWidth="32.0" text="CON" textAlignment="CENTER" textFill="#82250a">
-                            <font>
-                                <Font name="Apple Braille" size="12.0" />
-                            </font>
-                        </Label>
-                        <Label alignment="CENTER" layoutX="151.0" layoutY="170.0" prefHeight="25.0" prefWidth="32.0" text="INT" textAlignment="CENTER" textFill="#82250a">
-                            <font>
-                                <Font name="Apple Braille" size="12.0" />
-                            </font>
-                        </Label>
-                        <Label alignment="CENTER" layoutX="193.0" layoutY="170.0" prefHeight="25.0" prefWidth="32.0" text="WIS" textAlignment="CENTER" textFill="#82250a">
-                            <font>
-                                <Font name="Apple Braille" size="12.0" />
-                            </font>
-                        </Label>
-                        <Label alignment="CENTER" layoutX="236.0" layoutY="170.0" prefHeight="25.0" prefWidth="32.0" text="CHA" textAlignment="CENTER" textFill="#82250a">
-                            <font>
-                                <Font name="Apple Braille" size="12.0" />
-                            </font>
-                        </Label>
-                        <Line endX="155.0" layoutX="117.0" layoutY="72.0" startX="-100.0" stroke="#82250a" strokeWidth="2.0" />
-                        <Text fx:id="TextSizeTypeAlignment" layoutX="15.0" layoutY="52.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Size Type, Alignment" wrappingWidth="149.2060546875">
-                            <font>
-                                <Font name="Apple Braille Outline 6 Dot" size="12.0" />
-                            </font>
-                        </Text>
-                        <Line endX="155.0" layoutX="119.0" layoutY="237.0" startX="-100.0" stroke="#82250a" strokeWidth="2.0" />
-                        <Text fx:id="STRScore" layoutX="19.0" layoutY="208.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
-                            <font>
-                                <Font size="12.0" />
-                            </font>
-                        </Text>
-                        <Text fx:id="DEXScore" layoutX="64.0" layoutY="208.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
-                            <font>
-                                <Font size="12.0" />
-                            </font>
-                        </Text>
-                        <Text fx:id="CONScore" layoutX="110.0" layoutY="208.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
-                            <font>
-                                <Font size="12.0" />
-                            </font>
-                        </Text>
-                        <Text fx:id="INTScore" layoutX="154.0" layoutY="208.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
-                            <font>
-                                <Font size="12.0" />
-                            </font>
-                        </Text>
-                        <Text fx:id="WISScore" layoutX="197.0" layoutY="208.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
-                            <font>
-                                <Font size="12.0" />
-                            </font>
-                        </Text>
-                        <Text fx:id="CHAScore" layoutX="239.0" layoutY="208.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
-                            <font>
-                                <Font size="12.0" />
-                            </font>
-                        </Text>
-                        <Label layoutX="16.0" layoutY="242.0" prefHeight="25.0" prefWidth="49.0" text="Senses" textAlignment="CENTER" textFill="#82250a">
-                            <font>
-                                <Font name="Apple Braille" size="12.0" />
-                            </font>
-                        </Label>
-                    </children>
-                </AnchorPane>
-            </content>
-        </ScrollPane>
+        <Button fx:id="GenerateStatBlockButton" alignment="CENTER" contentDisplay="CENTER" layoutX="782.0" layoutY="727.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="142.0" text="Generate Stat Block" />
+        <ScrollPane fx:id="MonsterScrollPane" layoutX="23.0" layoutY="136.0" prefHeight="579.0" prefWidth="903.0" vmax="1000.0" />
         <Label alignment="CENTER" layoutX="271.0" layoutY="22.0" prefHeight="45.0" prefWidth="418.0" text="Monsters / NPCs" textAlignment="CENTER">
             <font>
                 <Font name="Apple Chancery" size="48.0" />
             </font>
         </Label>
+      <ToggleButton fx:id="IsAlwaysPopupToggle" layoutX="774.0" layoutY="61.0" mnemonicParsing="false" text="Always popup" textOverrun="WORD_ELLIPSIS" />
+      <Button fx:id="DeleteFromMonsterChoiceBoxButton" alignment="CENTER" contentDisplay="CENTER" layoutX="40.0" layoutY="97.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="68.0" text="Delete" />
+      <Button fx:id="ClearMonsterChoiceBoxButton" alignment="CENTER" contentDisplay="CENTER" layoutX="151.0" layoutY="97.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="68.0" text="Clear" />
     </children>
 </AnchorPane>

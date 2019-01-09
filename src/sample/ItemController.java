@@ -10,6 +10,10 @@ public class ItemController {
         this.globalController = globalController;
     }
 
+    public AnchorPane getContent() {
+        return content;
+    }
+
     @FXML
-    public AnchorPane content;
+    private AnchorPane content;
 }

@@ -20,12 +20,13 @@ import sample.SpellController;
  * Created by Jakob on 1/6/2019.
  */
 public class MonsterPopup extends Popup {
-    XMLHandler xmlh;
-    Monster monster;
-    GridPane gridPane;
-    Information info;
-    int counter;
-    SpellController spellController;
+    private XMLHandler xmlh;
+    private Monster monster;
+
+    private GridPane gridPane;
+    private Information info;
+    private int counter;
+    private SpellController spellController;
 
     public MonsterPopup(XMLHandler xmlh, Monster monster, SpellController spellController){
         this.spellController = spellController;
@@ -153,7 +154,6 @@ public class MonsterPopup extends Popup {
         Scene scene = new Scene(scrollPane, 800, 600);
 
         super.stage.setScene(scene);
-        super.stage.show();
     }
 
     private void buildReaction() {
@@ -350,9 +350,8 @@ public class MonsterPopup extends Popup {
 
             //Alt hvad traiten indeholder.
             for (String text : trait.getTexts()) {
-                System.out.println(text);
                 TextFlow textFlow = new TextFlow();
-                //NOTE: siden textCount > 1, bliver cantrips ikke lagt med i!
+                //Hvis det er en spell:
                 if (isSpellcasting && textCount > 0) {
                     String[] words = text.split(":");
                     Text text1 = new Text(words[0] + ":");
@@ -628,5 +627,8 @@ public class MonsterPopup extends Popup {
             b = 1/(b-a);
         } while (Math.abs(x-h1/k1) > x*tolerance);
         return Math.round(h1)+"/"+Math.round(k1);
+    }
+    public GridPane getGridPane() {
+        return gridPane;
     }
 }

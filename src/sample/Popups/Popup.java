@@ -11,7 +11,11 @@ public abstract class Popup {
     public void closeStage(){
         stage.close();
     }
+
     public String getStageTitle(){
         return stage.getTitle();
+    }
+    public void show(){
+        stage.show();
     }
 }
