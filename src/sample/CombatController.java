@@ -108,6 +108,7 @@ public class CombatController {
 
         TableViewOrder.setComparator(TableViewOrder.getComparator().reversed());
         TableViewInitiative.getSortOrder().add(TableViewOrder);
+
         this.xmlh = globalController.getXmlh();
         this.monsterController = globalController.getMonsterController();
         monsters = new ArrayList(xmlh.getMonsterHashMap().values());
@@ -124,6 +125,7 @@ public class CombatController {
             return s1.compareToIgnoreCase(s2);
         });
 
+        initializeTableColumnSortability();
         initializeSpellOrConditionSearchBar();
         initializeMonsterSearchBar();
         initiateGetMonsterOnDoubleClick();
@@ -140,6 +142,14 @@ public class CombatController {
         initiateInitiativeTableRowListener();
 
         forceSortColumn(sortOrder);
+    }
+
+    private void initializeTableColumnSortability() {
+        for (TableColumn column : TableViewInitiative.getColumns()) {
+            if (column.getId() != "TableViewOrder") {
+                //column.setSortable(false);
+            }
+        }
     }
 
     private void initiateInitiativeTableRowListener() {
