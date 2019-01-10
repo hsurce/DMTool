@@ -4,15 +4,10 @@ package sample;
  * Created by Jakob on 1/10/2019.
  */
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
+
+import java.util.Arrays;
 
 public class MonsterCreatorController {
 
@@ -53,7 +48,7 @@ public class MonsterCreatorController {
     private TextField MonsterDiceTypeTextField;
 
     @FXML
-    private ChoiceBox<?> MonsterSpeedChoiceBox;
+    private ChoiceBox<String> MonsterSpeedChoiceBox;
 
     @FXML
     private TextField MonsterSpeedValueTextField;
@@ -89,19 +84,19 @@ public class MonsterCreatorController {
     private TableColumn<?, ?> MonsterSpeedValueColumn;
 
     @FXML
-    private ChoiceBox<?> MonsterLanguagesChoiceBox;
+    private ChoiceBox<String> MonsterLanguagesChoiceBox;
 
     @FXML
     private Button MonsterLanguagesAddButton;
 
     @FXML
-    private ChoiceBox<?> MonsterCRChoiceBox;
+    private ChoiceBox<String> MonsterCRChoiceBox;
 
     @FXML
     private Button MonsterCRAddButton;
 
     @FXML
-    private ChoiceBox<?> MonsterOtherChoiceBox;
+    private ChoiceBox<String> MonsterOtherChoiceBox;
 
     @FXML
     private Button MonsterOtherAddButon;
@@ -131,64 +126,10 @@ public class MonsterCreatorController {
     private TableColumn<?, ?> MonsterAbilityDetailsNameColumn;
 
     @FXML
-    private ChoiceBox<?> MonsterSpellsCantripsChoiceBox;
+    private ChoiceBox<String> MonsterSpellsLevelChoiceBox;
 
     @FXML
-    private Button MonsterSpellsCantripsAddButton;
-
-    @FXML
-    private ChoiceBox<?> MonsterSpellsFirstLevelChoiceBox;
-
-    @FXML
-    private Button MonsterSpellsFirstLevelAddButton;
-
-    @FXML
-    private ChoiceBox<?> MonsterSpellsSecondLevelChoiceBox;
-
-    @FXML
-    private Button MonsterSpellsSecondLevelAddButton;
-
-    @FXML
-    private ChoiceBox<?> MonsterSpellsThirdLevelChoiceBox;
-
-    @FXML
-    private Button MonsterSpellsThirdLevelAddButton;
-
-    @FXML
-    private ChoiceBox<?> MonsterSpellsFourthLevelChoiceBox;
-
-    @FXML
-    private Button MonsterSpellsFourthLevelAddButton;
-
-    @FXML
-    private ChoiceBox<?> MonsterSpellsFifthLevelChoiceBox;
-
-    @FXML
-    private Button MonsterSpellsFifthLevelAddButton;
-
-    @FXML
-    private ChoiceBox<?> MonsterSpellsSixthLevelChoiceBox;
-
-    @FXML
-    private Button MonsterSpellsSixthLevelAddButton;
-
-    @FXML
-    private ChoiceBox<?> MonsterSpellsSeventhLevelChoiceBox;
-
-    @FXML
-    private Button MonsterSpellsSeventhLevelAddButton;
-
-    @FXML
-    private ChoiceBox<?> MonsterSpellsEighthLevelChoiceBox;
-
-    @FXML
-    private Button MonsterSpellsEighthLevelAddButton;
-
-    @FXML
-    private ChoiceBox<?> MonsterSpellsNinthLevelChoiceBox;
-
-    @FXML
-    private Button MonsterSpellsNinthLevelAddButton;
+    private Button MonsterSpellAddButton;
 
     @FXML
     private TableView<?> MonsterSpellDetailsTableView;
@@ -238,33 +179,102 @@ public class MonsterCreatorController {
     @FXML
     private Button MonsterTotalSaveButton;
 
+    @FXML
+    private TextField MonsterSpellSearchTextField;
+
+    @FXML
+    private CheckBox IsAttackActionCheckBox;
+
+    @FXML
+    private TextField MonsterAttackActionDieAmountTextField;
+
+    @FXML
+    private TextField MonsterAttackActionDieSizeTextField;
+
+    @FXML
+    private TextField MonsterAttackActionDamageBonusTextField;
+
+
     public ScrollPane getContent() {
         return MonsterCreatorScrollPane;
     }
 
     public void initialize(GlobalController globalController) {
-        //removeButtonTraversability();
+        initializeChoiceBoxes();
+        initializeAddButtons();
+        initializeSpecialButtons();
+        initializeSaveMonsterButton();
+
     }
 
-    private void removeButtonTraversability() {
-        MonsterAbilityAddButton.setFocusTraversable(false);
-        MonsterActionAddButton.setFocusTraversable(false);
-        MonsterAddImageButton.setFocusTraversable(false);
-        MonsterCRAddButton.setFocusTraversable(false);
-        MonsterLanguagesAddButton.setFocusTraversable(false);
-        MonsterSpeedAddButton.setFocusTraversable(false);
-        MonsterTotalClearButton.setFocusTraversable(false);
-        MonsterTotalSaveButton.setFocusTraversable(false);
-        MonsterLegendaryActionsAddButton.setFocusTraversable(false);
-        MonsterSpellsCantripsAddButton.setFocusTraversable(false);
-        MonsterSpellsFirstLevelAddButton.setFocusTraversable(false);
-        MonsterSpellsSecondLevelAddButton.setFocusTraversable(false);
-        MonsterSpellsThirdLevelAddButton.setFocusTraversable(false);
-        MonsterSpellsFourthLevelAddButton.setFocusTraversable(false);
-        MonsterSpellsFifthLevelAddButton.setFocusTraversable(false);
-        MonsterSpellsSixthLevelAddButton.setFocusTraversable(false);
-        MonsterSpellsSeventhLevelAddButton.setFocusTraversable(false);
-        MonsterSpellsEighthLevelAddButton.setFocusTraversable(false);
-        MonsterSpellsNinthLevelAddButton.setFocusTraversable(false);
+    private void initializeSpecialButtons() {
     }
+
+    private void initializeSaveMonsterButton() {
+        //...
+        saveToCustomMonsterBin();
+    }
+
+    private void initializeChoiceBoxes() {
+
+        MonsterCRChoiceBox.getItems().addAll(Arrays.asList(new String[]{"0","1/8","1/4","1/2","1","2","3","4","5","6","7","8","9","10","11","12","12","13","14","15","16","17","18","19","20"}));
+        MonsterLanguagesChoiceBox.getItems().addAll(Arrays.asList(new String[]{"Abyssal","Aquan","Auran","Celestial","Common","Deep Speech","Draconic","Druidic","Dwarvish","Elvish","Giant"
+                ,"Gnomish","Goblin","Gnoll","Halfling","Ignan","Infernal","Orc","Primordial","Sylvan","Terran","Undercommon"}));
+        MonsterOtherChoiceBox.getItems().addAll(Arrays.asList(new String[]{}));
+        MonsterSpeedChoiceBox.getItems().addAll(Arrays.asList(new String[]{"Normal","Burrow","Fly","Swim","Climb"}));
+        MonsterSpellsLevelChoiceBox.getItems().addAll(Arrays.asList(new String[]{"Cantrip","1","2","3","4","5","6","7","8","9"}));
+
+    }
+
+    private void initializeAddButtons() {
+        MonsterLegendaryActionsAddButton.setOnAction(e ->{
+            if(MonsterLegendaryActionsNameTextField.getText() != null){
+
+            }
+        });
+        MonsterSpeedAddButton.setOnAction(e ->{
+            if(MonsterSpeedChoiceBox.getSelectionModel().getSelectedItem() != null && MonsterSpeedValueTextField.getText() != null){
+
+            }
+
+        });
+        MonsterLanguagesAddButton.setOnAction(e ->{
+            if(MonsterLanguagesChoiceBox.getSelectionModel().getSelectedItem() != null){
+
+            }
+
+        });
+        MonsterCRAddButton.setOnAction(e ->{
+            if(MonsterCRChoiceBox.getSelectionModel().getSelectedItem() != null){
+
+            }
+
+        });
+        MonsterActionAddButton.setOnAction(e ->{
+            if(MonsterActionNameTextField.getText() != null){
+                //...
+
+                if(IsAttackActionCheckBox.isSelected()){
+                    //Lav attack action...
+                }
+            }
+
+        });
+        MonsterAbilityAddButton.setOnAction(e ->{
+            if(MonsterAbilityDescriptionTextArea.getText() != null){
+                //Lav en trait
+            }
+
+        });
+        MonsterSpellAddButton.setOnAction(e ->{
+            if(MonsterSpellSearchTextField.getText() != null){
+
+            }
+
+        });
+    }
+
+    private void saveToCustomMonsterBin() {
+    }
+
 }
