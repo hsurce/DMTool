@@ -32,8 +32,6 @@ public class DefaultController {
                 e1.printStackTrace();
             }
         });
-
-
         // SPELL BUTTON
 
         SpellButton.setOnAction(e -> {
@@ -43,7 +41,6 @@ public class DefaultController {
                 e1.printStackTrace();
             }
         });
-
         // ITEM BUTTON
 
         ItemsButton.setOnAction(e -> {
@@ -53,7 +50,6 @@ public class DefaultController {
                 e1.printStackTrace();
             }
         });
-
         // MAGIC ITEM BUTTON
 
         MagicItemsButton.setOnAction(e -> {
@@ -63,7 +59,6 @@ public class DefaultController {
                 e1.printStackTrace();
             }
         });
-
         // NAME GENERATOR BUTTON
 
         NameGeneratorButton.setOnAction(e -> {
@@ -73,6 +68,18 @@ public class DefaultController {
                 e1.printStackTrace();
             }
         });
+
+        CreateCustomButton.setOnAction(e -> {
+            try {
+                monsterCreatorButtonClicked();
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        });
+    }
+
+    private void monsterCreatorButtonClicked() throws Exception {
+        monsterCreator();
     }
 
     public void monsterButtonClicked() throws Exception {
@@ -99,6 +106,10 @@ public class DefaultController {
 
         this.splitPane.getItems().set(1, globalController.getNameGeneratorController().getContent());
     }
+    private void monsterCreator() throws Exception {
+        this.splitPane.getItems().set(1, globalController.getMonsterCreatorController().getContent());
+    }
+
 
     private void combat() throws IOException {
 
@@ -149,5 +160,8 @@ public class DefaultController {
 
     @FXML
     public AnchorPane content;
+
+    @FXML
+    public Button CreateCustomButton;
 
 }

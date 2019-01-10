@@ -30,6 +30,7 @@ public class Main extends Application {
     private ItemController itemController;
     private MagicItemController magicItemController;
     private NameGeneratorController nameGeneratorController;
+    private MonsterCreatorController monsterCreatorController;
     // Creating a double, to record and calculate frame x,y coordinates
     private double x,y;
     private double positionX = 0;
@@ -47,7 +48,7 @@ public class Main extends Application {
 
             //LOAD af alle FXML filer.
             loadFXMLFiles();
-            globalController = new GlobalController(xmlh,combatController,monsterController,spellController,itemController,magicItemController, nameGeneratorController);
+            globalController = new GlobalController(xmlh,combatController,monsterController,spellController,itemController,magicItemController, nameGeneratorController, monsterCreatorController);
             initializeControllers();
             primaryStage.setScene(new Scene(loginroot));
             primaryStage.initStyle(StageStyle.UNDECORATED);
@@ -93,6 +94,7 @@ public class Main extends Application {
         combatController.initialize(globalController);
         itemController.initialize(globalController);
         magicItemController.initialize(globalController);
+        monsterCreatorController.initialize(globalController);
     }
 
     public void proceedButtonClicked(Stage combatStage) throws Exception {
@@ -153,6 +155,10 @@ public class Main extends Application {
         FXMLLoader magicItemLoader = new FXMLLoader(getClass().getResource("XMLFiles/MagicItemLayout.fxml"));
         Parent magicItemRoot = magicItemLoader.load();
         magicItemController = (MagicItemController)magicItemLoader.getController();
+
+        FXMLLoader monsterCreatorloader = new FXMLLoader(getClass().getResource("XMLFiles/MonsterCreator.fxml"));
+        Parent monsterCreatorRoot = monsterCreatorloader.load();
+        monsterCreatorController = (MonsterCreatorController) monsterCreatorloader.getController();
 
 
     }

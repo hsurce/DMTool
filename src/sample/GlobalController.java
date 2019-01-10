@@ -20,11 +20,12 @@ public class GlobalController {
     private ItemController itemController;
     private MagicItemController magicItemController;
     private NameGeneratorController nameGeneratorController;
+    private MonsterCreatorController monsterCreatorController;
     private HashMap<String, Popup> checkPopupMap;
 
     public GlobalController(XMLHandler xmlh, CombatController combatController, MonsterController monsterController,
                             SpellController spellController, ItemController itemController, MagicItemController magicItemController,
-                            NameGeneratorController nameGeneratorController)
+                            NameGeneratorController nameGeneratorController, MonsterCreatorController monsterCreatorController)
     {
         this.checkPopupMap = new HashMap<>();
         this.xmlh = xmlh;
@@ -34,6 +35,7 @@ public class GlobalController {
         this.itemController = itemController;
         this.magicItemController = magicItemController;
         this.nameGeneratorController = nameGeneratorController;
+        this.monsterCreatorController = monsterCreatorController;
 
     }
 
@@ -72,5 +74,9 @@ public class GlobalController {
             checkPopupMap.remove(popup.getStageTitle());
         }
         checkPopupMap.put(popup.getStageTitle(), popup);
+    }
+
+    public MonsterCreatorController getMonsterCreatorController() {
+        return monsterCreatorController;
     }
 }
