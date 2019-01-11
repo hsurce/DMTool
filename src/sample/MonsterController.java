@@ -16,12 +16,13 @@ public class MonsterController {
     private ArrayList<String> classFilter;
     private ArrayList<String> levelFilter;
     private XMLHandler xmlh;
+
     private ArrayList<Monster> monsters;
+
     private ArrayList<Monster> filteredMonsterList;
     private AutoCompletionBinding<String> autoCompletionBinding;
     private Main root2;
     private boolean isAlwaysPopup = false;
-
     GlobalController globalController;
 
     public void initialize(GlobalController globalController) {
@@ -46,6 +47,10 @@ public class MonsterController {
         initializeGenerateStatBlockButton();
         initializeDeleteFromMonsterChoiceBoxButton();
         initializeClearMonsterChoiceBoxButton();
+    }
+
+    public ArrayList<Monster> getMonsters() {
+        return monsters;
     }
 
     private void initializeClearMonsterChoiceBoxButton() {
@@ -98,7 +103,7 @@ public class MonsterController {
         });
     }
 
-    private void initializeSearchBar() {
+    public void initializeSearchBar() {
         ArrayList<String> monsterNames = new ArrayList<>();
         TextFields.bindAutoCompletion(MonsterSearch, monsterNames);
         if (filteredMonsterList.isEmpty()) {

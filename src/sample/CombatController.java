@@ -1,26 +1,23 @@
 package sample;
 
+import XMLHandler.Monster;
+import XMLHandler.Spell;
 import XMLHandler.XMLHandler;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.TextFields;
 import sample.ItemSkeletons.Condition;
 import sample.ItemSkeletons.Initiative;
-import XMLHandler.Monster;
 import sample.Popups.MonsterPopup;
-import XMLHandler.Spell;
 import sample.Popups.SpellPopup;
 
 import java.io.IOException;
@@ -34,14 +31,15 @@ public class CombatController {
     private CombatPopupInitiativeListController cpilc;
     private ArrayList<TableRow<Initiative>> clearList;
     private XMLHandler xmlh;
+
     private ArrayList<Monster> monsters;
+
     private AutoCompletionBinding<String> autoCompletionBindingMonster;
     private AutoCompletionBinding<String> autoCompletionBindingSpellsAndConditions;
     private MonsterController monsterController;
     private GlobalController globalController;
     private ArrayList<Spell> spells;
     private ArrayList<String> conditions;
-
     @FXML
     private AnchorPane content;
 
@@ -493,7 +491,7 @@ public class CombatController {
     }
 
 
-    private void initializeMonsterSearchBar() {
+    public void initializeMonsterSearchBar() {
         ArrayList<String> monsterNames = new ArrayList<>();
         TextFields.bindAutoCompletion(monsterSearchBar, monsterNames);
 
@@ -590,11 +588,13 @@ public class CombatController {
             spellAndConditionNames.add(spell.getName());
         }
         bindAutoCompleteSpellsAndConditions(spellAndConditionNames);
-
-
     }
 
     public AnchorPane getContent() {
         return content;
+    }
+
+    public ArrayList<Monster> getMonsters() {
+        return monsters;
     }
 }

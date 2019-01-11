@@ -27,4 +27,20 @@ public class Stat implements Serializable {
     public void setValue(int value) {
         this.value = value;
     }
+
+    public static class StatBuilder{
+        String nestedName;
+        int nestedValue;
+
+        public void name(String nestedName){
+            this.nestedName = nestedName;
+        }
+        public void value(int nestedValue){
+            this.nestedValue = nestedValue;
+        }
+        public Stat BuildStat(){
+            Stat stat = new Stat(nestedName,nestedValue);
+            return stat;
+        }
+    }
 }

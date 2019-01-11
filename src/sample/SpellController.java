@@ -348,5 +348,6 @@ public class SpellController {
             SpellChoiceBox.getItems().add(s);
             SpellChoiceBox.getSelectionModel().select(s);
         }
+
     }
 }

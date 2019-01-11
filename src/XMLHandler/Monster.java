@@ -1,6 +1,7 @@
 package XMLHandler;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 /**
@@ -175,4 +176,234 @@ public class Monster implements Serializable {
     public void setVulnerable(ArrayList<String> vulnerable) {
         this.vulnerable = vulnerable;
     }
+
+    public static class MonsterBuilder{
+
+        Information nestedInfo;
+
+        public ArrayList<Stat> getNestedSkills() {
+            if(nestedSkills == null) nestedSkills = new ArrayList<Stat>();
+            return nestedSkills;
+        }
+
+        public ArrayList<Stat> getNestedSaves() {
+            if(nestedSaves == null) nestedSaves = new ArrayList<Stat>();
+            return nestedSaves;
+        }
+
+        public ArrayList<String> getNestedResists() {
+
+            if(nestedResists == null) nestedResists = new ArrayList<String>();
+            return nestedResists;
+        }
+
+        public ArrayList<String> getNestedImmunities() {
+
+            if(nestedImmunities == null) nestedImmunities = new ArrayList<String>();
+            return nestedImmunities;
+        }
+
+        public ArrayList<String> getNestedConditionImmunities() {
+
+            if(nestedConditionImmunities == null) nestedConditionImmunities = new ArrayList<String>();
+            return nestedConditionImmunities;
+        }
+
+        ArrayList<Stat> nestedSkills;
+
+        public String getNestedSpeeds() {
+            if(nestedSpeeds == null) nestedSpeeds = "";
+
+            return nestedSpeeds;
+        }
+
+        private String nestedSpeeds;
+
+        public String getNestedSenses() {
+
+            if(nestedSenses == null) nestedSenses = "";
+            return nestedSenses;
+        }
+
+        private String nestedSenses;
+        ArrayList<Stat> nestedSaves;
+        ArrayList<Trait> nestedTraits;
+        ArrayList<Action> nestedActions;
+        ArrayList<Action> nestedLegendaryActions;
+        ArrayList<AttackAction> nestedAttackActions;
+
+        ArrayList<String> nestedLanguages;
+
+        ArrayList<String> nestedResists;
+        ArrayList<String> nestedImmunities;
+        ArrayList<String> nestedConditionImmunities;
+        ArrayList<String> nestedSpells;
+        ArrayList<String> nestedVulnerable;
+        ArrayList<Integer> nestedSpellSlots;
+        public ArrayList<String> getNestedLanguages() {
+            if(nestedLanguages == null){
+                nestedLanguages = new ArrayList<>();
+            }
+            return nestedLanguages;
+        }
+
+        /**
+         * Vi gør brug af et builder-pattern for at gøre arbejdet nemmest muligt.
+         * Ved at bruge denne struktur kan vi sørge for at XMLParseren ikke skal
+         * junglere med mange forskellige værdier indtil de yderste tags den behandler
+         * bliver sluttet. I stærk kontrast til det, kan man ved brug af denne struktur
+         * blot passere værdierne til builderen, hvorefter builderen tager sig af at oplagre
+         * værdierne, indtil det egentlige objekt skal dannes.
+         */
+        public MonsterBuilder(){
+            /**
+             nestedSkills = new ArrayList<>();
+             nestedSpeeds = "";
+             nestedSenses = "";
+             nestedSaves = new ArrayList<>();
+             nestedTraits = new ArrayList<>();
+             nestedActions = new ArrayList<>();
+             nestedLegendaryActions = new ArrayList<>();
+             nestedAttackActions = new ArrayList<>();
+             nestedLanguages = new ArrayList<>();
+             nestedResists = new ArrayList<>();
+             nestedImmunities = new ArrayList<>();
+             nestedConditionImmunities = new ArrayList<>();
+             nestedSpells = new ArrayList<>();
+             nestedSpellSlots = new ArrayList<>();
+             nestedVulnerable = new ArrayList<>();
+            */
+        }
+
+        public void info(final Information newInfo){
+            this.nestedInfo = newInfo;
+        }
+
+
+        public void speeds(String newSpeeds){
+            nestedSpeeds = newSpeeds;
+        }
+
+        public void skills(ArrayList<Stat> newSkills){
+            this.nestedSkills = newSkills;
+        }
+
+        public void saves(ArrayList<Stat> newSaves){
+            this.nestedSaves = newSaves;
+        }
+
+        public void senses(String newSenses){
+            this.nestedSenses = newSenses;
+        }
+
+        public void traits(Trait newTraits){
+            if(nestedTraits != null) {
+                this.nestedTraits.add(newTraits);
+            }
+            else {
+                nestedTraits = new ArrayList<>();
+                nestedTraits.add(newTraits);
+            }
+        }
+
+        public void actions(Action newActions){
+            if(nestedActions != null) {
+                this.nestedActions.add(newActions);
+            }
+            else {
+                nestedActions = new ArrayList<>();
+                nestedActions.add(newActions);
+            }
+
+        }
+
+        public void legendaryActions(Action newLegendaryActions){
+            if(nestedLegendaryActions != null) {
+                this.nestedLegendaryActions.add(newLegendaryActions);
+            }
+            else{
+                nestedLegendaryActions = new ArrayList<>();
+                nestedLegendaryActions.add(newLegendaryActions);
+            }
+        }
+
+        public void attackActions(AttackAction newAttackActions){
+            if(nestedAttackActions != null) {
+                this.nestedAttackActions.add(newAttackActions);
+            }
+            else{
+                nestedAttackActions = new ArrayList<>();
+                nestedAttackActions.add(newAttackActions);
+            }
+        }
+
+        /**
+         * En metode som splitter en string på kommaer, og derefter indsætter rest-værdierne i en arraylist
+         * som senere kan videresendes til det relevante monsterobjekt. Dette er en meget generel metode
+         * der bliver brugt til at lave arraylists til forskellige formål.
+         * @param s
+
+         * @return
+         */
+        public ArrayList<String> ProcessMonsterString(String s){
+            ArrayList<String> al = new ArrayList<>();
+            String[] word = s.split(",");
+            for(int i = 0; i<word.length; i++){
+                al.add(word[i]);
+            }
+            return al;
+        }
+
+        public void languages(ArrayList<String> newLanguages){
+            this.nestedLanguages = newLanguages;
+        }
+
+        public void vulnerable(ArrayList<String> newVulnerable){this.nestedVulnerable = newVulnerable;}
+
+        public void resists(ArrayList<String> newResists){
+            this.nestedResists = newResists;
+        }
+
+        public void immunities(ArrayList<String> newImmunities){
+            this.nestedImmunities = newImmunities;
+        }
+
+        public void conditionImmunities(ArrayList<String> newConditionImmunities){
+            this.nestedConditionImmunities = newConditionImmunities;
+        }
+        public void spells(ArrayList<String> newSpells){
+            this.nestedSpells = newSpells;
+        }
+
+        public void spellSlots(Integer newSlots){
+            if(nestedSpellSlots != null) {
+                this.nestedSpellSlots.add(newSlots);
+            }
+            else{
+                nestedSpellSlots = new ArrayList<>();
+                nestedSpellSlots.add(newSlots);
+            }
+        }
+
+        public Monster createMonster(){
+            Monster monster = new Monster(nestedInfo,nestedSkills,nestedSpeeds,nestedSaves,nestedSenses,nestedTraits,nestedActions,
+                    nestedLegendaryActions,nestedAttackActions,nestedLanguages,nestedResists,nestedImmunities,nestedConditionImmunities, nestedSpells,nestedSpellSlots,nestedVulnerable);
+            try {
+                checkNull();
+                System.out.println(this.nestedInfo.getName());
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            return monster;
+        }
+        public void checkNull() throws IllegalAccessException {
+            for (Field f : getClass().getDeclaredFields()){
+                if (f.get(this) == null)
+                    System.out.println(f.getName());
+            }
+        }
+
+
+    }
 }
+

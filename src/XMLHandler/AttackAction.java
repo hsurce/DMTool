@@ -51,4 +51,37 @@ public class AttackAction implements Serializable {
         this.damageBonus = damageBonus;
     }
 
+    public static class AttackActionBuilder{
+        Action nestedAction;
+        int nestedToHit;
+        HitDie nestedHitDie;
+        int nestedDamageBonus;
+
+
+        public void toHit(int nestedToHit){
+            this.nestedToHit = nestedToHit;
+        }
+        public void hitDie(HitDie nestedHitDie){
+            this.nestedHitDie = nestedHitDie;
+        }
+        public void damageBonus(int nestedDamageBonus){
+            this.nestedDamageBonus = nestedDamageBonus;
+        }
+        public void action(Action nestedAction){
+            this.nestedAction = nestedAction;
+        }
+        public AttackAction BuildAttackAction(){
+            AttackAction attackAction = new AttackAction(nestedAction,nestedToHit,nestedHitDie,nestedDamageBonus);
+            return attackAction;
+        }
+
+        /**
+         * Metode som finder hitDie og attack bonus samt damage bonus for det enkelte angreb.
+         * @param s
+         * @param hdb
+         */
+
+
+      }
+
 }

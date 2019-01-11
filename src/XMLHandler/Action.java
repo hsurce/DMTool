@@ -30,4 +30,22 @@ public class Action implements Serializable {
         this.texts = texts;
     }
 
+    public static class ActionBuilder{
+        String nestedName;
+        ArrayList<String> nestedTexts;
+        public ActionBuilder(){
+            nestedTexts = new ArrayList<>();
+        }
+        public void name(String nestedName){
+            this.nestedName = nestedName;
+        }
+        public void text(String nestedText){
+            this.nestedTexts.add(nestedText);
+        }
+        public Action BuildAction(){
+            Action action = new Action(nestedName,nestedTexts);
+            return action;
+        }
+    }
+
 }

@@ -1,6 +1,7 @@
 package XMLHandler;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 /**
@@ -197,4 +198,116 @@ public class Information implements Serializable {
     public void setSpellCastingAbility(String spellCastingAbility) {
         this.spellCastingAbility = spellCastingAbility;
     }
-}
+
+    public static class InformationBuilder {
+        private String nestedName;
+        private String nestedSize;
+        private ArrayList<String> nestedType;
+        private String nestedAlignment;
+        private String nestedInnateAbility;
+        private String nestedSpellCastingAbility;
+        private int nestedHp;
+        private int nestedStr;
+        private int nestedDex;
+        private int nestedCon;
+        private int nestedIntel;
+        private int nestedWis;
+        private int nestedCha;
+        private double nestedCr;
+        private int nestedPassivePerception;
+        private HitDie nestedHitDie;
+        private Stat nestedAc;
+        private Action nestedReaction;
+
+        public void name(final String newName){
+            this.nestedName = newName;
+        }
+        public void size(final String newSize){
+            this.nestedSize = newSize;
+        }
+        public void type(final String newType){
+            if(nestedType != null) {
+                this.nestedType.add(newType);
+            }
+            else{
+                nestedType = new ArrayList<>();
+                nestedType.add(newType);
+            }
+        }
+
+        public void alignment(final String newAlignment){
+            this.nestedAlignment = newAlignment;
+        }
+
+        public void innateAbility(final String newInnateAbility){
+            this.nestedInnateAbility = newInnateAbility;
+        }
+        public void spellCastingAbility(final String newSpellCastingAbility){
+            this.nestedSpellCastingAbility = newSpellCastingAbility;
+        }
+
+        public void hp(final int newHp){
+            this.nestedHp = newHp;
+        }
+
+        public void str(final int newStr){
+            this.nestedStr = newStr;
+        }
+
+        public void dex(final int newDex){
+            this.nestedDex = newDex;
+        }
+
+        public void con(final int newCon){
+            this.nestedCon = newCon;
+        }
+
+        public void intel(final int newIntel){
+            this.nestedIntel = newIntel;
+        }
+
+        public void wis(final int newWis){
+            this.nestedWis = newWis;
+        }
+
+        public void cha(final int newCha){
+            this.nestedCha = newCha;
+        }
+
+        public void cr(final double newCr){
+            this.nestedCr = newCr;
+        }
+
+        public void passivePerception(final int newPassivePerception){
+            this.nestedPassivePerception = newPassivePerception;
+        }
+
+        public void hp(final HitDie newHitDie){
+            this.nestedHitDie = newHitDie;
+        }
+
+        public void ac(final Stat newAc){
+            this.nestedAc = newAc;
+        }
+
+        public void reaction(final Action newReaction) { this.nestedReaction = newReaction;
+        }
+        public Information createInformation(){
+            Information information = new Information(nestedName,nestedSize,nestedType,nestedAlignment,nestedAc,nestedHp,
+                    nestedHitDie, nestedStr, nestedDex, nestedCon, nestedIntel, nestedWis, nestedCha, nestedCr, nestedPassivePerception, nestedReaction,nestedInnateAbility,nestedSpellCastingAbility);
+            try {
+                checkNull();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            return information;
+        }
+        public void checkNull() throws IllegalAccessException {
+            for (Field f : getClass().getDeclaredFields()){
+                if (f.get(this) == null)
+                    System.out.println(f.getName());
+                }
+            }
+        }
+
+    }
