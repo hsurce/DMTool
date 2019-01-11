@@ -365,8 +365,10 @@ public class MonsterPopup extends Popup {
                         if (xmlh.getSpellHashMap().containsKey(s.toLowerCase())) {
                             n = new Hyperlink(s);
                             String finalS = s;
-                            ((Hyperlink) n).setOnAction(e ->
-                                   spellController.handleCompletion(finalS));
+                            ((Hyperlink) n).setOnAction(e -> {
+                                         SpellPopup spellPopup = new SpellPopup(xmlh.getSpellHashMap().get(finalS.toLowerCase()));
+                                         spellPopup.show();
+                                     });
                         } else {
                             n = new Text(s + "\n");
 

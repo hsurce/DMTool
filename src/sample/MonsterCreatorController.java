@@ -203,18 +203,23 @@ public class MonsterCreatorController {
 
     @FXML
     private Button MonsterTotalSaveButton;
+    private ArrayList<String> innateList;
+    private ArrayList<String> spellcastingList;
 
     private Information.InformationBuilder informationBuilder;
     private Monster.MonsterBuilder monsterBuilder;
     private AutoCompletionBinding<String> autoCompletionBinding;
     private GlobalController globalController;
     private XMLHandler xmlh;
+    private Trait.TraitBuilder spellInnateTraitBuilder;
+    private Trait.TraitBuilder spellcastingTraitBuilder;
 
     public void initialize(GlobalController globalController) {
         this.globalController = globalController;
         this.xmlh = globalController.getXmlh();
         ArrayList<String> spellNames = new ArrayList<>();
-
+        innateList = new ArrayList<>(Arrays.asList("","","","","","","","","",""));
+        spellcastingList = new ArrayList<>(Arrays.asList("","","","","","","","","",""));
         for (Spell spell: xmlh.getSpellHashMap().values()) {
             spellNames.add(spell.getName());
         }
@@ -225,6 +230,12 @@ public class MonsterCreatorController {
         initializeAddButtons();
         initializeSpecialButtons();
         initializeSaveMonsterButton();
+        MonsterSTRTextField.setText("0");
+        MonsterDEXTextField.setText("0");
+        MonsterCONTextField.setText("0");
+        MonsterINTTextField.setText("0");
+        MonsterWISTextField.setText("0");
+        MonsterCHATextField.setText("0");
 
 
     }
@@ -248,6 +259,22 @@ public class MonsterCreatorController {
             informationBuilder.intel(Integer.parseInt(MonsterINTTextField.getText()));
             informationBuilder.wis(Integer.parseInt(MonsterWISTextField.getText()));
             informationBuilder.cha(Integer.parseInt(MonsterCHATextField.getText()));
+            if(spellInnateTraitBuilder != null){
+                for (String s:innateList) {
+                    if(!s.isEmpty()) {
+                        spellInnateTraitBuilder.text(s);
+                    }
+                }
+                monsterBuilder.traits(spellInnateTraitBuilder.BuildTrait());
+            }
+            if(spellcastingTraitBuilder != null){
+                for (String s:spellcastingList) {
+                    if(!s.isEmpty()) {
+                        spellcastingTraitBuilder.text(s);
+                    }
+                }
+                monsterBuilder.traits(spellcastingTraitBuilder.BuildTrait());
+            }
             monsterBuilder.info(informationBuilder.createInformation());
             Monster m = monsterBuilder.createMonster();
             //GØR DET PÆNERE
@@ -444,6 +471,62 @@ public class MonsterCreatorController {
         //MONSTER SPELLS
 
         MonsterSpellAddButton.setOnAction(e ->{
+            if(MonsterInnateOrSpellcastingChoiceBox.getSelectionModel().getSelectedItem() != null
+                    && MonsterSpellcastingModifierChoiceBox.getSelectionModel().getSelectedItem() != null
+                    && MonsterNameTextField.getText() != null
+                    && MonsterCRChoiceBox.getSelectionModel().getSelectedItem() != null){
+                if(spellInnateTraitBuilder == null) {
+                    spellInnateTraitBuilder = new Trait.TraitBuilder();
+                }
+                if(spellcastingTraitBuilder == null) {
+                    spellcastingTraitBuilder = new Trait.TraitBuilder();
+                }
+
+                int proficiency;
+                if(MonsterCRChoiceBox.getSelectionModel().getSelectedItem().contains("/")){
+                    proficiency = 1;
+                }
+                else {
+                    proficiency = (int) (7 + Double.parseDouble(MonsterCRChoiceBox.getSelectionModel().getSelectedItem()) / 4);
+                }
+                if(proficiency < 2){
+                    proficiency = 2;
+                }
+                int spellModifier = 0;
+                if (MonsterSpellcastingModifierChoiceBox.getSelectionModel().getSelectedItem().equals("Intelligence")) {
+                   spellModifier =  (int)(Integer.parseInt(MonsterINTTextField.getText())-10)/2;
+                }
+                if (MonsterSpellcastingModifierChoiceBox.getSelectionModel().getSelectedItem().equals("Wisdom")){
+                    spellModifier =  (int)(Integer.parseInt(MonsterWISTextField.getText())-10)/2;
+                }
+                if (MonsterSpellcastingModifierChoiceBox.getSelectionModel().getSelectedItem().equals("Charisma")){
+                    spellModifier =  (int)(Integer.parseInt(MonsterCHATextField.getText())-10)/2;
+                }
+                int spellSaveDC = 8 + proficiency + spellModifier;
+                int spellAttack = proficiency + spellModifier;
+                if(MonsterInnateOrSpellcastingChoiceBox.getSelectionModel().getSelectedItem().equals("Innate Spellcasting")){
+
+                    spellInnateTraitBuilder.name("Innate Spellcasting");
+                    if(spellInnateTraitBuilder.getNestedTexts().size() == 0) {
+                        spellInnateTraitBuilder.text("The " + MonsterNameTextField.getText() + "'s innate spellcasting ability is "
+                                + MonsterSpellcastingModifierChoiceBox.getSelectionModel().getSelectedItem() + " (spell save DC " +
+                                spellSaveDC + ", +" + spellAttack + " to hit with spell attacks). the " + MonsterNameTextField.getText() +
+                                " can innately cast the following spells, requiring no material components:");
+                    }
+                    addSpellToText(innateList);
+                }
+                if(MonsterInnateOrSpellcastingChoiceBox.getSelectionModel().getSelectedItem().equals("Spellcasting")){
+                    spellcastingTraitBuilder.name("Spellcasting");
+                    if(spellcastingTraitBuilder.getNestedTexts().size() == 0) {
+                        spellcastingTraitBuilder.text("The " + MonsterNameTextField.getText() + " spellcasting ability is "
+                                + MonsterSpellcastingModifierChoiceBox.getSelectionModel().getSelectedItem() + " (spell save DC " +
+                                spellSaveDC + ", +" + spellAttack + " to hit with spell attacks). the " + MonsterNameTextField.getText() +
+                                " has the following spells prepared:");
+                    }
+                    addSpellToText(spellcastingList);
+                }
+
+            }
             //LAV EN TRAIT PÅ BAGGRUND AF DETTE DER MIRRORER DEM I MM.
             //HUSK AT LAV EN BYG FUNKTION I SAVE KNAPPEN
         });
@@ -459,6 +542,85 @@ public class MonsterCreatorController {
 
     private void saveToCustomMonsterBin() {
     }
+
+    private void addSpellToText(ArrayList<String> arrayList){
+        switch(xmlh.getSpellHashMap().get(MonsterSpellSearchTextField.getText().toLowerCase()).getLevel()){
+            case 0:
+                if(arrayList.get(0).isEmpty()){
+                    arrayList.set(0,"• Cantrips (at will): " + MonsterSpellSearchTextField.getText().toLowerCase());
+                }
+                else arrayList.set(0,arrayList.get(0) + ", " + MonsterSpellSearchTextField.getText().toLowerCase());
+                break;
+            case 1:
+                if(arrayList.get(1).isEmpty()){
+                    arrayList.set(1,"• 1st level (? slots): " + MonsterSpellSearchTextField.getText().toLowerCase());
+                }
+                else arrayList.set(1,arrayList.get(1) + ", " + MonsterSpellSearchTextField.getText().toLowerCase());
+                break;
+            case 2:
+                if(arrayList.get(2).isEmpty()){
+                    arrayList.set(2,"• 2nd level (? slots): " + MonsterSpellSearchTextField.getText().toLowerCase());
+                }
+                else arrayList.set(2,arrayList.get(1) + ", " + MonsterSpellSearchTextField.getText().toLowerCase());
+
+                break;
+            case 3:
+                if(arrayList.get(3).isEmpty()){
+                    arrayList.set(3,"• 3rd level (? slots): " + MonsterSpellSearchTextField.getText().toLowerCase());
+                }
+                else arrayList.set(3,arrayList.get(1) + ", " + MonsterSpellSearchTextField.getText().toLowerCase());
+
+                break;
+            case 4:
+                if(arrayList.get(4).isEmpty()){
+                    arrayList.set(4,"• 4th level (? slots): " + MonsterSpellSearchTextField.getText().toLowerCase());
+                }
+                else arrayList.set(4,arrayList.get(1) + ", " + MonsterSpellSearchTextField.getText().toLowerCase());
+
+
+                break;
+            case 5:
+                if(arrayList.get(5).isEmpty()){
+                    arrayList.set(5,"• 5th level (? slots): " + MonsterSpellSearchTextField.getText().toLowerCase());
+                }
+                else arrayList.set(5,arrayList.get(1) + ", " + MonsterSpellSearchTextField.getText().toLowerCase());
+
+
+                break;
+            case 6:
+                if(arrayList.get(6).isEmpty()){
+                    arrayList.set(6,"• 6th level (? slots): " + MonsterSpellSearchTextField.getText().toLowerCase());
+                }
+                else arrayList.set(6,arrayList.get(1) + ", " + MonsterSpellSearchTextField.getText().toLowerCase());
+
+                break;
+            case 7:
+
+                if(arrayList.get(7).isEmpty()){
+                    arrayList.set(7,"• 7th level (? slots): " + MonsterSpellSearchTextField.getText().toLowerCase());
+                }
+                else arrayList.set(7,arrayList.get(1) + ", " + MonsterSpellSearchTextField.getText().toLowerCase());
+                break;
+            case 8:
+                if(arrayList.get(8).isEmpty()){
+                    arrayList.set(8,"• 8th level (? slots): " + MonsterSpellSearchTextField.getText().toLowerCase());
+                }
+                else arrayList.set(8,arrayList.get(1) + ", " + MonsterSpellSearchTextField.getText().toLowerCase());
+                break;
+            case 9:
+
+                if(arrayList.get(9).isEmpty()){
+                    arrayList.set(9,"• 9th level (? slots): " + MonsterSpellSearchTextField.getText().toLowerCase());
+                }
+                else arrayList.set(9,arrayList.get(1) + ", " + MonsterSpellSearchTextField.getText().toLowerCase());
+
+                break;
+        }
+    }
+
+
+
+
     public class StringTuple {
         private String x;
 
