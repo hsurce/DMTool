@@ -148,7 +148,6 @@ public class MonsterPopup extends Popup {
         columnConstraints.setFillWidth(true);
         gridPane.getColumnConstraints().add(columnConstraints);
 
-
         super.stage = new Stage();
         super.stage.setTitle(monster.getInfo().getName());
         Scene scene = new Scene(scrollPane, 800, 600);
@@ -357,23 +356,25 @@ public class MonsterPopup extends Popup {
                     Text text1 = new Text(words[0] + ":");
                     textFlow.getChildren().add(text1);
                     Node n;
-                    for (String s : words[1].split(",")) {
-                        if (s.startsWith(" ")) {
-                            s = s.substring(1);
-                        }
+                    if(words.length > 0) {
+                        for (String s : words[1].split(",")) {
+                            if (s.startsWith(" ")) {
+                                s = s.substring(1);
+                            }
 
-                        if (xmlh.getSpellHashMap().containsKey(s.toLowerCase())) {
-                            n = new Hyperlink(s);
-                            String finalS = s;
-                            ((Hyperlink) n).setOnAction(e -> {
-                                         SpellPopup spellPopup = new SpellPopup(xmlh.getSpellHashMap().get(finalS.toLowerCase()));
-                                         spellPopup.show();
-                                     });
-                        } else {
-                            n = new Text(s + "\n");
+                            if (xmlh.getSpellHashMap().containsKey(s.toLowerCase())) {
+                                n = new Hyperlink(s);
+                                String finalS = s;
+                                ((Hyperlink) n).setOnAction(e -> {
+                                    SpellPopup spellPopup = new SpellPopup(xmlh.getSpellHashMap().get(finalS.toLowerCase()));
+                                    spellPopup.show();
+                                });
+                            } else {
+                                n = new Text(s + "\n");
 
+                            }
+                            textFlow.getChildren().add(n);
                         }
-                        textFlow.getChildren().add(n);
                     }
                     gridPane.add(textFlow, 0, counter, 1, 1);
                     counter++;

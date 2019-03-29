@@ -3,17 +3,29 @@ package sample;
 /**
  * Created by Jakob on 1/10/2019.
  */
+
 import XMLHandler.*;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.TextFields;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MonsterCreatorController {
+
+    @FXML
+    private TextField MonsterSearchTextField;
+
+    @FXML
+    private TableColumn<String, String> MonsterSpellDetailsSpellModifierColumn;
 
     @FXML
     private ScrollPane MonsterCreatorScrollPane;
@@ -205,7 +217,7 @@ public class MonsterCreatorController {
     private Button MonsterTotalSaveButton;
     private ArrayList<String> innateList;
     private ArrayList<String> spellcastingList;
-
+    private AutoCompletionBinding<String> autoCompletionBindingMonster;
     private Information.InformationBuilder informationBuilder;
     private Monster.MonsterBuilder monsterBuilder;
     private AutoCompletionBinding<String> autoCompletionBinding;
@@ -229,71 +241,355 @@ public class MonsterCreatorController {
         initializeChoiceBoxes();
         initializeAddButtons();
         initializeSpecialButtons();
-        initializeSaveMonsterButton();
         MonsterSTRTextField.setText("0");
         MonsterDEXTextField.setText("0");
         MonsterCONTextField.setText("0");
         MonsterINTTextField.setText("0");
         MonsterWISTextField.setText("0");
         MonsterCHATextField.setText("0");
+        MonsterCRChoiceBox.getSelectionModel().selectFirst();
+        InitializeMonsterSearchBar();
+        InitializeTableViewFunctionality();
+    }
 
+    private void InitializeTableViewFunctionality() {
+        for(Node node: MonsterCreatorAnchorPane.getChildren()){
+            if(node.getClass() == TableView.class){
+                TableView tableView = (TableView) node;
+                tableView.setOnKeyPressed(event -> {
+                    if (tableView.isFocused()) {
+                        switch (event.getCode()) {
+                            case BACK_SPACE:
+                                tableView.getItems().remove(tableView.getSelectionModel().getFocusedIndex());
+                                break;
+                            case DELETE:
+                                tableView.getItems().remove(tableView.getSelectionModel().getFocusedIndex());
+                                break;
+                            case ENTER:
+                                editTableView(tableView);
+                        }
+                    }
+                });
+
+            }
+        }
+    }
+
+    private void editTableView(TableView tableView) {
+        if(tableView.equals(MonsterDetailsTableView)){
+            /**
+             * REFAKTORISERING AF ACTIONS(ATTACK ACTIONS) OG GENERELLE DETAILS.
+             * ALLE 3 TABLEVIEWS MANGLER EN USYNLIG COLUMN MED DEN SPECIFIKKE DETALJE FOR LET AFHENTNING.
+             */
+            switch(MonsterDetailsTableView.getSelectionModel().getSelectedItem().getX()){
+                case "Language":
+                    for(String string: MonsterLanguagesChoiceBox.getItems()){
+                        if(string.equals(MonsterDetailsTableView.getSelectionModel().getSelectedItem().getY())){
+                            MonsterLanguagesChoiceBox.getSelectionModel().
+                                    select(MonsterDetailsTableView.getSelectionModel().getSelectedItem().getY());
+                        }
+                    }
+                    break;
+                case "Sense":
+                    MonsterOtherChoiceBox.getSelectionModel().select(MonsterDetailsTableView.getSelectionModel().getSelectedItem().getX()+"s");
+
+                    break;
+
+                case "Skill":
+                    MonsterOtherChoiceBox.getSelectionModel().select("Skills");
+                    break;
+
+                case "Save":
+                    MonsterOtherChoiceBox.getSelectionModel().select("Saves");
+                    break;
+
+                case "Dam. Resistance":
+                    MonsterOtherChoiceBox.getSelectionModel().select("Damage Resistances");
+                    break;
+
+                case "Dam. Immunity":
+                    MonsterOtherChoiceBox.getSelectionModel().select("Damage Immunities");
+                    break;
+
+                case "Cond. Immunity":
+                    MonsterOtherChoiceBox.getSelectionModel().select("Condition Immunities");
+                    break;
+
+            }
+            if(!MonsterDetailsTableView.getSelectionModel().getSelectedItem().getX().equals("Language")) {
+                MonsterOtherTextField.setText(MonsterDetailsTableView.getSelectionModel().getSelectedItem().getY());
+            }
+            MonsterDetailsTableView.getItems().remove(MonsterDetailsTableView.getSelectionModel().getSelectedItem());
+        }
+        if(tableView.equals(MonsterAbilityDetailsTableView)){
+
+            MosterAbilityDetailsNameTextField.setText(MonsterAbilityDetailsTableView.getSelectionModel().getSelectedItem().getName());
+            MonsterAbilityDescriptionTextArea.setText(MonsterAbilityDetailsTableView.getSelectionModel().getSelectedItem().getTexts().get(0));
+            MonsterAbilityDetailsTableView.getItems().remove(MonsterAbilityDetailsTableView.getSelectionModel().getSelectedItem());
+        }
+        if(tableView.equals(MonsterActionDetailsTableView)){
+            MonsterActionNameTextField.setText(MonsterActionDetailsTableView.getSelectionModel().getSelectedItem().getName());
+            MonsterActionDescriptionTextArea.setText(MonsterActionDetailsTableView.getSelectionModel().getSelectedItem().getTexts().get(0));
+            MonsterAbilityDetailsTableView.getItems().remove(MonsterAbilityDetailsTableView.getSelectionModel().getSelectedItem());
+        }
+        if(tableView.equals(MonsterAddedMovementsTableView)){
+            String speedValue = MonsterAddedMovementsTableView.getSelectionModel().getSelectedItem().getY();
+            speedValue = speedValue.split(" ")[0];
+            MonsterSpeedValueTextField.setText(speedValue);
+            for(String s: MonsterSpeedChoiceBox.getItems()){
+                System.out.println(MonsterAddedMovementsTableView.getSelectionModel().getSelectedItem().getX());
+                if(s.equalsIgnoreCase(MonsterAddedMovementsTableView.getSelectionModel().getSelectedItem().getX())){
+                    MonsterSpeedChoiceBox.getSelectionModel().select(s);
+                }
+            }
+            MonsterAddedMovementsTableView.getItems().remove(MonsterAddedMovementsTableView.getSelectionModel().getSelectedItem());
+        }
+
+        if(tableView.equals(MonsterLegendaryActionsDetailsTableView)){
+            MonsterLegendaryActionsNameTextField.setText(MonsterLegendaryActionsDetailsTableView.getSelectionModel().getSelectedItem().getName());
+            MonsterLegendaryActionsDescriptionTextArea.setText(MonsterLegendaryActionsDetailsTableView.getSelectionModel().getSelectedItem().getTexts().get(0));
+            MonsterLegendaryActionsDetailsTableView.getItems().remove(MonsterLegendaryActionsDetailsTableView.getSelectionModel().getSelectedItem());
+        }
+    }
+
+    private void InitializeMonsterSearchBar() {
+        ArrayList<String> monsterNames = new ArrayList<>();
+        TextFields.bindAutoCompletion(MonsterSearchTextField, monsterNames);
+        ArrayList<Monster> monsterArray = new ArrayList<>();
+        monsterArray.addAll(xmlh.getMonsterHashMap().values());
+
+        for (Monster monster: monsterArray) {
+            monsterNames.add(monster.getInfo().getName());
+        }
+        bindAutoCompleteMonster(monsterNames);
+    }
+
+    private void bindAutoCompleteMonster(ArrayList<String> monsterNames){
+        if(autoCompletionBindingMonster != null) {
+            autoCompletionBindingMonster.dispose();
+        }
+        autoCompletionBindingMonster = TextFields.bindAutoCompletion(MonsterSearchTextField, monsterNames);
+        autoCompletionBindingMonster.setOnAutoCompleted(event ->
+                handleMonsterCompletion(event.getCompletion()));
 
     }
+
+    private void handleMonsterCompletion(String s) {
+        if(xmlh.getMonsterHashMap().containsKey(s)) {
+            Clear();
+            Monster monster = xmlh.getMonsterHashMap().get(s);
+
+            MonsterNameTextField.setText(monster.getInfo().getName());
+            MonsterSizeTextField.setText(monster.getInfo().getSize());
+            //MonsterTypeTextField;
+
+            String concat = "";
+            for (String string : monster.getInfo().getType()) {
+                concat += string;
+            }
+            MonsterTypeTextField.setText(concat);
+            if(monster.getLanguages() != null) {
+                for (String string : monster.getLanguages()) {
+                    MonsterDetailsTableView.getItems().add(new StringTuple("Language", string));
+                }
+            }
+            if(monster.getSenses() != null) {
+                String[] senses = monster.getSenses().split(",");
+                for (String string : senses) {
+                    MonsterDetailsTableView.getItems().add(new StringTuple("Sense", string));
+                }
+            }
+            if(monster.getSaves() != null) {
+                for (Stat stat : monster.getSaves()) {
+                    String string = stat.getName() + " + " + stat.getValue();
+                    MonsterDetailsTableView.getItems().add(new StringTuple("Save", string));
+                }
+            }
+            if(monster.getSkills() != null) {
+                for (Stat stat : monster.getSkills()) {
+                    String string = stat.getName() + " + " + stat.getValue();
+                    MonsterDetailsTableView.getItems().add(new StringTuple("Skill", string));
+                }
+            }
+            if(monster.getResists() != null) {
+                for (String string : monster.getResists()) {
+                    MonsterDetailsTableView.getItems().add(new StringTuple("Dam. Resist", string));
+                }
+            }
+            if(monster.getImmunities() != null) {
+                for (String string : monster.getImmunities()) {
+                    MonsterDetailsTableView.getItems().add(new StringTuple("Dam. Immunity", string));
+                }
+            }
+            if(monster.getConditionImmunities() != null) {
+                for (String string : monster.getConditionImmunities()) {
+                    MonsterDetailsTableView.getItems().add(new StringTuple("Cond. Immunity", string));
+                }
+            }
+            if(monster.getSpeeds() != null) {
+                String[] speed = monster.getSpeeds().split(",");
+                int count = 0;
+                for (String string : speed) {
+                    if(count > 0){
+                        string = string.substring(1);
+                    }
+                    Pattern p = Pattern.compile("([a-z]*)( *)([0-9]+)( ft.)(.*)");
+                    Matcher m = p.matcher(string);
+                    if (m.matches()) {
+                        MonsterAddedMovementsTableView.getItems().add(new StringTuple(m.group(1), m.group(3) + m.group(4)+m.group(5)));
+                    }
+                    count++;
+                }
+            }
+            Double d = monster.getInfo().getCr();
+            if (d < 1) {
+                /**
+                 * GRIM KODE AHEAD! KUNNE IKKE LIGE FINDE EN ELEGANT LØSNING!
+                 */
+                if (d == 0) {
+                    MonsterCRChoiceBox.getSelectionModel().select(0);
+                }
+                if (d == 0.125) {
+                    MonsterCRChoiceBox.getSelectionModel().select(1);
+                }
+                if (d == 0.25) {
+                    MonsterCRChoiceBox.getSelectionModel().select(2);
+                }
+                if (d == 0.5) {
+                    MonsterCRChoiceBox.getSelectionModel().select(3);
+                }
+            } else {
+                MonsterCRChoiceBox.getSelectionModel().select(d.intValue() + 3);
+            }
+            MonsterAlignmentTextField.setText(monster.getInfo().getAlignment());
+            MonsterACTextField.setText(monster.getInfo().getAc().getValue() + "");
+            if(monster.getInfo().getAc().getName() != null) {
+                MonsterArmorTypeTextField.setText(monster.getInfo().getAc().getName() + "");
+            }
+            MonsterHPTextField.setText(monster.getInfo().getHp() + "");
+            MonsterAmountTextField.setText(monster.getInfo().getHitDie().getDieAmount() + "");
+            MonsterDiceTypeTextField.setText(monster.getInfo().getHitDie().getDieSize() + "");
+            MonsterSTRTextField.setText(monster.getInfo().getStr() + "");
+            MonsterDEXTextField.setText(monster.getInfo().getDex() + "");
+            MonsterCONTextField.setText(monster.getInfo().getCon() + "");
+            MonsterINTTextField.setText(monster.getInfo().getIntel() + "");
+            MonsterWISTextField.setText(monster.getInfo().getWis() + "");
+            MonsterCHATextField.setText(monster.getInfo().getCha() + "");
+            if (monster.getSpells() != null) {
+                int count = 0;
+                for (String string : monster.getSpells()) {
+                    if(count > 0) {
+                        Spell spell = xmlh.getSpellHashMap().get(string.substring(1).toLowerCase());
+
+                        MonsterSpellDetailsTableView.getItems().add(spell);
+                        MonsterSpellDetailsTableView.getItems().size();
+                    }
+                    else {
+                        Spell spell = xmlh.getSpellHashMap().get(string.toLowerCase());
+                        MonsterSpellDetailsTableView.getItems().add(spell);
+                    }
+                    count++;
+                }
+                MonsterSpellDetailsTableView.refresh();
+            }
+            if (monster.getTraits() != null) {
+                for (Trait trait : monster.getTraits()) {
+                    MonsterAbilityDetailsTableView.getItems().add(trait);
+                }
+            }
+            if (monster.getActions() != null) {
+                for (Action action : monster.getActions()) {
+                    MonsterActionDetailsTableView.getItems().add(action);
+                }
+            }
+            if (monster.getAttackActions() != null){
+                for (AttackAction attackAction: monster.getAttackActions()){
+
+                    MonsterActionDetailsTableView.getItems().add(attackAction.getAction());
+                }
+            }
+            if (monster.getLegendaryActions() != null) {
+                for (Action action : monster.getLegendaryActions())
+                    MonsterLegendaryActionsDetailsTableView.getItems().add((LegendaryAction) action);
+            }
+        }
+    }
+
 
     public ScrollPane getContent() {
         return MonsterCreatorScrollPane;
     }
 
     private void initializeSpecialButtons() {
-        MonsterTotalSaveButton.setOnAction(e ->{
-            informationBuilder.name(MonsterNameTextField.getText());
-            informationBuilder.size(MonsterSizeTextField.getText());
-            informationBuilder.type(MonsterTypeTextField.getText());
-            informationBuilder.alignment(MonsterAlignmentTextField.getText());
-            informationBuilder.ac(new Stat(MonsterArmorTypeTextField.getText(),Integer.parseInt(MonsterACTextField.getText())));
-            informationBuilder.hp(Integer.parseInt(MonsterHPTextField.getText()));
-            informationBuilder.hp(new HitDie(Integer.parseInt(MonsterAmountTextField.getText()), Integer.parseInt(MonsterDiceTypeTextField.getText())));
-            informationBuilder.str(Integer.parseInt(MonsterSTRTextField.getText()));
-            informationBuilder.dex(Integer.parseInt(MonsterDEXTextField.getText()));
-            informationBuilder.con(Integer.parseInt(MonsterCONTextField.getText()));
-            informationBuilder.intel(Integer.parseInt(MonsterINTTextField.getText()));
-            informationBuilder.wis(Integer.parseInt(MonsterWISTextField.getText()));
-            informationBuilder.cha(Integer.parseInt(MonsterCHATextField.getText()));
-            if(spellInnateTraitBuilder != null){
-                for (String s:innateList) {
-                    if(!s.isEmpty()) {
-                        spellInnateTraitBuilder.text(s);
+        MonsterTotalClearButton.setOnAction(e -> Clear());
+        MonsterTotalSaveButton.setOnAction(e -> {
+            if(!xmlh.getMonsterHashMap().containsKey(MonsterNameTextField.getText())) {
+                informationBuilder.name(MonsterNameTextField.getText());
+                informationBuilder.size(MonsterSizeTextField.getText());
+                informationBuilder.type(MonsterTypeTextField.getText());
+                informationBuilder.cr(getCR());
+                informationBuilder.alignment(MonsterAlignmentTextField.getText());
+                informationBuilder.ac(new Stat(MonsterArmorTypeTextField.getText(), Integer.parseInt(MonsterACTextField.getText())));
+                informationBuilder.hp(Integer.parseInt(MonsterHPTextField.getText()));
+                informationBuilder.hp(new HitDie(Integer.parseInt(MonsterAmountTextField.getText()), Integer.parseInt(MonsterDiceTypeTextField.getText())));
+                informationBuilder.str(Integer.parseInt(MonsterSTRTextField.getText()));
+                informationBuilder.dex(Integer.parseInt(MonsterDEXTextField.getText()));
+                informationBuilder.con(Integer.parseInt(MonsterCONTextField.getText()));
+                informationBuilder.intel(Integer.parseInt(MonsterINTTextField.getText()));
+                informationBuilder.wis(Integer.parseInt(MonsterWISTextField.getText()));
+                informationBuilder.cha(Integer.parseInt(MonsterCHATextField.getText()));
+                //BYG EVT. SPELLS
+                if (spellInnateTraitBuilder != null) {
+                    if (spellInnateTraitBuilder.getNestedName() != null) {
+                        for (String s : innateList) {
+                            if (!s.isEmpty()) {
+                                spellInnateTraitBuilder.text(s);
+                            }
+                        }
+                        monsterBuilder.traits(spellInnateTraitBuilder.BuildTrait());
                     }
                 }
-                monsterBuilder.traits(spellInnateTraitBuilder.BuildTrait());
-            }
-            if(spellcastingTraitBuilder != null){
-                for (String s:spellcastingList) {
-                    if(!s.isEmpty()) {
-                        spellcastingTraitBuilder.text(s);
+                if (spellcastingTraitBuilder != null) {
+                    if (spellcastingTraitBuilder.getNestedName() != null) {
+                        for (String s : spellcastingList) {
+                            if (!s.isEmpty()) {
+                                spellcastingTraitBuilder.text(s);
+                            }
+                        }
+                        monsterBuilder.traits(spellcastingTraitBuilder.BuildTrait());
                     }
                 }
-                monsterBuilder.traits(spellcastingTraitBuilder.BuildTrait());
+                //BYG RESTEN AF MONSTERET OG LÆG DEN I LISTEN
+                monsterBuilder.info(informationBuilder.createInformation());
+                Monster m = monsterBuilder.createMonster();
+                //GØR DET PÆNERE
+                xmlh.getMonsterHashMap().put(m.getInfo().getName(), m);
+                globalController.getMonsterController().getMonsters().add(m);
+                globalController.getCombatController().getMonsters().add(m);
+                globalController.getMonsterController().initializeSearchBar();
+                globalController.getCombatController().initializeMonsterSearchBar();
+                saveToCustomMonsterBin(m);
             }
-            monsterBuilder.info(informationBuilder.createInformation());
-            Monster m = monsterBuilder.createMonster();
-            //GØR DET PÆNERE
-            xmlh.getMonsterHashMap().put(m.getInfo().getName(), m);
-            globalController.getMonsterController().getMonsters().add(m);
-            globalController.getCombatController().getMonsters().add(m);
-            globalController.getMonsterController().initializeSearchBar();
-            globalController.getCombatController().initializeMonsterSearchBar();
+
         });
     }
 
-    private void initializeSaveMonsterButton() {
-        //...
-        saveToCustomMonsterBin();
+    private double getCR() {
+        double cr;
+        if(MonsterCRChoiceBox.getSelectionModel().getSelectedItem().contains("/")){
+            String[] word = MonsterCRChoiceBox.getSelectionModel().getSelectedItem().split("/");
+            cr = Double.parseDouble(word[0])/Double.parseDouble(word[1]);
+        }
+        else{
+            cr = Double.parseDouble(MonsterCRChoiceBox.getSelectionModel().getSelectedItem());
+        }
+        return cr;
     }
+
 
     private void initializeChoiceBoxes() {
 
-        MonsterCRChoiceBox.getItems().addAll(Arrays.asList(new String[]{"0","1/8","1/4","1/2","1","2","3","4","5","6","7","8","9","10","11","12","12","13","14","15","16","17","18","19","20"}));
+        MonsterCRChoiceBox.getItems().addAll(Arrays.asList(new String[]{"0","1/8","1/4","1/2","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"}));
         MonsterLanguagesChoiceBox.getItems().addAll(Arrays.asList(new String[]{"Abyssal","Aquan","Auran","Celestial","Common","Deep Speech","Draconic","Druidic","Dwarvish","Elvish","Giant"
                 ,"Gnomish","Goblin","Gnoll","Halfling","Ignan","Infernal","Orc","Primordial","Sylvan","Terran","Undercommon"}));
         MonsterOtherChoiceBox.getItems().addAll(Arrays.asList(new String[]{}));
@@ -411,6 +707,7 @@ public class MonsterCreatorController {
             if(MonsterLanguagesChoiceBox.getSelectionModel().getSelectedItem() != null){
                 monsterBuilder.getNestedLanguages().add(MonsterLanguagesChoiceBox.getSelectionModel().getSelectedItem());
                 //LÆG TIL TABLEVIEWET
+                MonsterDetailsTableView.getItems().add(new StringTuple("Language",MonsterLanguagesChoiceBox.getSelectionModel().getSelectedItem()));
                 System.out.println(MonsterLanguagesChoiceBox.getSelectionModel().getSelectedItem());
             }
 
@@ -418,16 +715,7 @@ public class MonsterCreatorController {
         //MONSTER CR
         MonsterCRAddButton.setOnAction(e ->{
             if(MonsterCRChoiceBox.getSelectionModel().getSelectedItem() != null){
-                double cr = 0;
-                if(MonsterCRChoiceBox.getSelectionModel().getSelectedItem().contains("/")){
-                    String[] word = MonsterCRChoiceBox.getSelectionModel().getSelectedItem().split("/");
-                    cr = Double.parseDouble(word[0])/Double.parseDouble(word[1]);
-                }
-                else{
-                    cr = Double.parseDouble(MonsterCRChoiceBox.getSelectionModel().getSelectedItem());
-                }
-                informationBuilder.cr(cr);
-                System.out.println(cr);
+
             }
 
         });
@@ -449,6 +737,7 @@ public class MonsterCreatorController {
                     attackActionBuilder.hitDie(hitDieBuilder.BuildHitDie());
                     attackActionBuilder.damageBonus(Integer.parseInt(MonsterAttackActionDamageBonusTextField.getText()));
                     monsterBuilder.attackActions(attackActionBuilder.BuildAttackAction());
+                    action.setName(action.getName()+" (AA)");
                 }
                 else monsterBuilder.actions(action);
                 MonsterActionDetailsTableView.getItems().add(action);
@@ -487,7 +776,7 @@ public class MonsterCreatorController {
                     proficiency = 1;
                 }
                 else {
-                    proficiency = (int) (7 + Double.parseDouble(MonsterCRChoiceBox.getSelectionModel().getSelectedItem()) / 4);
+                    proficiency = (int) (7 + Double.parseDouble(MonsterCRChoiceBox.getSelectionModel().getSelectedItem())) / 4;
                 }
                 if(proficiency < 2){
                     proficiency = 2;
@@ -504,6 +793,7 @@ public class MonsterCreatorController {
                 }
                 int spellSaveDC = 8 + proficiency + spellModifier;
                 int spellAttack = proficiency + spellModifier;
+
                 if(MonsterInnateOrSpellcastingChoiceBox.getSelectionModel().getSelectedItem().equals("Innate Spellcasting")){
 
                     spellInnateTraitBuilder.name("Innate Spellcasting");
@@ -527,6 +817,9 @@ public class MonsterCreatorController {
                 }
 
             }
+            if(xmlh.getSpellHashMap().containsKey(MonsterSpellSearchTextField.getText().toLowerCase())) {
+                MonsterSpellDetailsTableView.getItems().add(xmlh.getSpellHashMap().get(MonsterSpellSearchTextField.getText().toLowerCase()));
+            }
             //LAV EN TRAIT PÅ BAGGRUND AF DETTE DER MIRRORER DEM I MM.
             //HUSK AT LAV EN BYG FUNKTION I SAVE KNAPPEN
         });
@@ -540,7 +833,58 @@ public class MonsterCreatorController {
 
     }
 
-    private void saveToCustomMonsterBin() {
+    private void saveToCustomMonsterBin(Monster monster) {
+        if(xmlh.getCustomMonsterHashMap() != null) {
+            if(!xmlh.getCustomMonsterHashMap().containsKey(monster.getInfo().getName())){
+                xmlh.getCustomMonsterHashMap().put(monster.getInfo().getName(), monster);
+                saveCustomMonsterHashMap(xmlh.getCustomMonsterHashMap());
+                Clear();
+            }
+        }
+        else{
+
+                HashMap<String, Monster> monsterMap = new HashMap<String, Monster>();
+                monsterMap.put(monster.getInfo().getName(), monster);
+                saveCustomMonsterHashMap(monsterMap);
+            }
+    }
+
+    private void Clear() {
+        for(Node node: MonsterCreatorAnchorPane.getChildrenUnmodifiable()){
+            if(node.getClass() == TextField.class){
+                TextField tf;
+                tf = (TextField) node;
+                tf.clear();
+            }
+            if(node.getClass() == TableView.class){
+                TableView tv;
+                tv = (TableView) node;
+                tv.getItems().clear();
+            }
+        }
+    }
+
+    private void saveCustomMonsterHashMap(HashMap<String,Monster> monsterMap) {
+        try{
+        String tmpPath = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+        File tmpFile = new File(tmpPath);
+        tmpFile = tmpFile.getParentFile();
+        String file = tmpFile.getAbsolutePath() + "/Directories/";
+        File absFile = new File(file);
+
+        FileOutputStream fos = new FileOutputStream(absFile.getPath()+"/customMonsters.bin");
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        oos.writeObject(monsterMap);
+        oos.close();
+        fos.close();
+    } catch (
+    FileNotFoundException e) {
+        e.printStackTrace();
+    } catch (
+    IOException e) {
+        e.printStackTrace();
+    }
+
     }
 
     private void addSpellToText(ArrayList<String> arrayList){

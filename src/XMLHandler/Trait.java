@@ -31,6 +31,10 @@ public class Trait implements Serializable {
     }
 
     public static class TraitBuilder{
+        public String getNestedName() {
+            return nestedName;
+        }
+
         String nestedName;
 
         public ArrayList<String> getNestedTexts() {

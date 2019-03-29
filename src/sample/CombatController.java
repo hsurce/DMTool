@@ -258,13 +258,12 @@ public class CombatController {
         //ADD PLAYERS FROM WATERDEEP
         ArrayList<Initiative> arrListInit = new ArrayList<Initiative>();
         arrListInit.add(new Initiative("<p>Ivellios", "NEW ROLL!", "Nico", 16));
-        arrListInit.add(new Initiative("<p>Will", "NEW ROLL!", "Jakob", 18));
+        arrListInit.add(new Initiative("<p>Jared", "NEW ROLL!", "Jakob", 18));
         arrListInit.add(new Initiative("<p>Innil", "NEW ROLL!", "Daniel", 12));
-        arrListInit.add(new Initiative("<p>Belfir", "NEW ROLL!", "Tobias", 15));
-        arrListInit.add(new Initiative("<p>Kevin", "NEW ROLL!", "Christian", 19));
-        arrListInit.add(new Initiative("<p>Selise", "NEW ROLL!", "Malte", 11));
-        arrListInit.add(new Initiative("<p>Thorning", "NEW ROLL!", "Jon", 11));
-        arrListInit.add(new Initiative("<p>Nisha", "NEW ROLL!", "Seb(Nattergalen)", 16));
+        arrListInit.add(new Initiative("<p>Belfir", "NEW ROLL!", "Tobias", 16));
+        arrListInit.add(new Initiative("<p>Kevin", "NEW ROLL!", "Christian", 20));
+        arrListInit.add(new Initiative("<p>Caltan", "NEW ROLL!", "Malte", 20));
+        arrListInit.add(new Initiative("<p>Temraz", "NEW ROLL!", "Seb", 12));
 
         TableViewInitiative.getItems().setAll(arrListInit);
         for(Initiative initiative: arrListInit){
@@ -311,9 +310,10 @@ public class CombatController {
             ObservableList<Initiative> initiativeSelected;
             initiativeSelected = TableViewInitiative.getSelectionModel().getSelectedItems();
             for(Initiative initiative: initiativeSelected){
+                /**
                 initiative.setInitiativeRoll("0");
                 initiative.setFinalInitiative(0);
-
+*/
                 TextInputDialog dialog = new TextInputDialog("");
                 dialog.setTitle("New Roll");
                 dialog.setHeaderText("Add a new roll to this character!");
@@ -321,6 +321,8 @@ public class CombatController {
 
                 Optional<String> result = dialog.showAndWait();
                 result.ifPresent(newRoll -> initiative.setInitiativeRoll(newRoll));
+                globalController.getPrimaryStage().requestFocus();
+                TableViewInitiative.requestFocus();
                 initiative.calcFinalInitiative();
                 /**
                  * HER ER finalInitiative LAGT TIL FOR LETHEDENS SKYLD. SKAL HAVE BEDRE FIX!
@@ -335,7 +337,9 @@ public class CombatController {
                  *
                  *
                  */
-                initiative.setInitiativeRoll(initiative.getInitiativeRoll() + " | " + initiative.getFinalInitiative());
+                if(!initiative.getInitiativeRoll().endsWith("|")) {
+                    initiative.setInitiativeRoll(initiative.getInitiativeRoll() + " | " + initiative.getFinalInitiative() + " |");
+                }
                 forceSortColumn(sortOrder);
             }
             checkForDuplication();

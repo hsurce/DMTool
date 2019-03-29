@@ -1,17 +1,14 @@
 package XMLHandler;
 
 import java.io.*;
-import java.net.URISyntaxException;
 import java.net.URLDecoder;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 
 public class XMLHandler {
     private HashMap<String, Monster> monsterHashMap = null;
     private HashMap<String, Spell> spellHashMap = null;
+    private HashMap<String, Monster> customMonsterHashMap = null;
     private final String path = "XMLHandler/Directories";
     private String encodedJarFile = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
     private File jarFile = new File(URLDecoder.decode(encodedJarFile, "UTF-8"));
@@ -21,6 +18,7 @@ public class XMLHandler {
         System.out.println(jarFile);
         System.out.println(jarFile.isFile());
         Start();
+        monsterHashMap.putAll(customMonsterHashMap);
     }
 
     public void Start() {
@@ -54,9 +52,12 @@ public class XMLHandler {
         try {
             switch(count) {
                 case 0:
-                    monsterHashMap = (HashMap<String, Monster>)ois.readObject();
+                    customMonsterHashMap = (HashMap<String, Monster>)ois.readObject();
                     break;
                 case 1:
+                    monsterHashMap = (HashMap<String, Monster>)ois.readObject();
+                    break;
+                case 2:
                     spellHashMap = (HashMap)ois.readObject();
                     break;
 
@@ -115,4 +116,6 @@ public class XMLHandler {
     public HashMap<String, Monster> getMonsterHashMap() {
         return monsterHashMap;
     }
+
+    public HashMap<String, Monster> getCustomMonsterHashMap() {return customMonsterHashMap; }
 }

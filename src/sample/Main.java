@@ -48,7 +48,7 @@ public class Main extends Application {
 
             //LOAD af alle FXML filer.
             loadFXMLFiles();
-            globalController = new GlobalController(xmlh,combatController,monsterController,spellController,itemController,magicItemController, nameGeneratorController, monsterCreatorController);
+            globalController = new GlobalController(xmlh,combatController,monsterController,spellController,itemController,magicItemController, nameGeneratorController, monsterCreatorController, defaultController);
             initializeControllers();
             primaryStage.setScene(new Scene(loginroot));
             primaryStage.initStyle(StageStyle.UNDECORATED);
@@ -179,6 +179,7 @@ public class Main extends Application {
             primaryStage.setX(positionX);
             primaryStage.setY(positionY);
         }
+        globalController.setPrimaryStage(primaryStage);
 
     }
 

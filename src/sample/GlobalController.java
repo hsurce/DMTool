@@ -1,10 +1,10 @@
 package sample;
 
 import XMLHandler.XMLHandler;
+import javafx.stage.Stage;
 import sample.Popups.Popup;
 
 import java.util.HashMap;
-import java.util.HashSet;
 
 /**
  * Created by Jakob on 1/7/2019.
@@ -21,11 +21,14 @@ public class GlobalController {
     private MagicItemController magicItemController;
     private NameGeneratorController nameGeneratorController;
     private MonsterCreatorController monsterCreatorController;
+    private DefaultController defaultController;
     private HashMap<String, Popup> checkPopupMap;
+    private Stage primaryStage;
 
     public GlobalController(XMLHandler xmlh, CombatController combatController, MonsterController monsterController,
                             SpellController spellController, ItemController itemController, MagicItemController magicItemController,
-                            NameGeneratorController nameGeneratorController, MonsterCreatorController monsterCreatorController)
+                            NameGeneratorController nameGeneratorController, MonsterCreatorController monsterCreatorController,
+                            DefaultController defaultController)
     {
         this.checkPopupMap = new HashMap<>();
         this.xmlh = xmlh;
@@ -36,6 +39,7 @@ public class GlobalController {
         this.magicItemController = magicItemController;
         this.nameGeneratorController = nameGeneratorController;
         this.monsterCreatorController = monsterCreatorController;
+        this.defaultController = defaultController;
 
     }
 
@@ -78,5 +82,17 @@ public class GlobalController {
 
     public MonsterCreatorController getMonsterCreatorController() {
         return monsterCreatorController;
+    }
+
+    public DefaultController getDefaultController() {
+        return defaultController;
+    }
+
+    public void setPrimaryStage(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+    }
+
+    public Stage getPrimaryStage() {
+        return primaryStage;
     }
 }
