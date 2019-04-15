@@ -1,6 +1,5 @@
 package sample.ItemSkeletons;
 
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -81,7 +80,15 @@ public class Initiative {
 
         }
         else if(initiativeRoll.contains("*")) {
-            this.finalInitiative = 1000 + convertedDex;
+            if(initiativeRoll.startsWith("20")) {
+                this.finalInitiative = 1000 + convertedDex;
+            }
+            if(initiativeRoll.startsWith("1")){
+                this.finalInitiative = -1000 + convertedDex;
+            }
+            else{
+                this.finalInitiative = 1000 + convertedDex;
+            }
         }
         else finalInitiative = 0 + convertedDex;
         }

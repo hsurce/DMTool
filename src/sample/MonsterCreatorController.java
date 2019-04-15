@@ -587,7 +587,7 @@ public class MonsterCreatorController {
     }
 
 
-    private void initializeChoiceBoxes() {
+    private void    initializeChoiceBoxes() {
 
         MonsterCRChoiceBox.getItems().addAll(Arrays.asList(new String[]{"0","1/8","1/4","1/2","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"}));
         MonsterLanguagesChoiceBox.getItems().addAll(Arrays.asList(new String[]{"Abyssal","Aquan","Auran","Celestial","Common","Deep Speech","Draconic","Druidic","Dwarvish","Elvish","Giant"

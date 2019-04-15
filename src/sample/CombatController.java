@@ -20,7 +20,7 @@ import sample.ItemSkeletons.Initiative;
 import sample.Popups.MonsterPopup;
 import sample.Popups.SpellPopup;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 
@@ -138,7 +138,11 @@ public class CombatController {
         initiateInitiativeListPopupButton();
         initiateClearButton();
         initiateNewRollButton();
-        initiatePreBuiltPlayerList();
+        try {
+            initiatePreBuiltPlayerList();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         initializeInitiativeChoiceBox();
         initiateClearConditionsButton();
         initiateConditionDeleteButton();
@@ -254,7 +258,27 @@ public class CombatController {
 
     }
 
-    private void initiatePreBuiltPlayerList() {
+    private void initiatePreBuiltPlayerList() throws IOException {
+        String tmpPath = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+        File tmpFile = new File(tmpPath);
+        tmpFile = tmpFile.getParentFile();
+
+        String file = tmpFile.getAbsolutePath() + "/players/players.txt";
+        File absFile = new File(file);
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(absFile));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        ArrayList<Initiative> arrListInit = new ArrayList<Initiative>();
+        String st;
+        while ((st = br.readLine()) != null){
+            String[] stArr = st.split(",");
+            arrListInit.add(new Initiative(stArr[0],stArr[1], stArr[2], Integer.parseInt(stArr[3])));
+        }
+        br.close();
+        /**
         //ADD PLAYERS FROM WATERDEEP
         ArrayList<Initiative> arrListInit = new ArrayList<Initiative>();
         arrListInit.add(new Initiative("<p>Ivellios", "NEW ROLL!", "Nico", 16));
@@ -264,7 +288,7 @@ public class CombatController {
         arrListInit.add(new Initiative("<p>Kevin", "NEW ROLL!", "Christian", 20));
         arrListInit.add(new Initiative("<p>Caltan", "NEW ROLL!", "Malte", 20));
         arrListInit.add(new Initiative("<p>Temraz", "NEW ROLL!", "Seb", 12));
-
+*/
         TableViewInitiative.getItems().setAll(arrListInit);
         for(Initiative initiative: arrListInit){
             initiative.calcFinalInitiative();
