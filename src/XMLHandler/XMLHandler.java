@@ -49,19 +49,19 @@ public class XMLHandler {
         ObjectInputStream ois;
         fis = new FileInputStream(file);
         ois = new ObjectInputStream(fis);
+        System.out.println(file.getName());
         try {
-            switch(count) {
-                case 0:
-                    customMonsterHashMap = (HashMap<String, Monster>)ois.readObject();
-                    break;
-                case 1:
-                    monsterHashMap = (HashMap<String, Monster>)ois.readObject();
-                    break;
-                case 2:
-                    spellHashMap = (HashMap)ois.readObject();
-                    break;
-
+            if(file.getName().equals("customMonsters.bin")) {
+                customMonsterHashMap = (HashMap<String, Monster>) ois.readObject();
             }
+            if(file.getName().equals("MonstersManual.bin")){
+                monsterHashMap = (HashMap<String, Monster>) ois.readObject();
+            }
+            if(file.getName().equals("Spells.bin")) {
+                spellHashMap = (HashMap) ois.readObject();
+            }
+
+
 
             /**
              int content;
