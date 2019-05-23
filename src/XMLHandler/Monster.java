@@ -209,6 +209,38 @@ public class Monster implements Serializable {
             return nestedConditionImmunities;
         }
 
+        public ArrayList<Action> getNestedActions() {
+
+            if(nestedActions == null) nestedActions = new ArrayList<Action>();
+            return nestedActions;
+        }
+
+        public ArrayList<AttackAction> getNestedAttackActions() {
+
+            if(nestedAttackActions == null) nestedAttackActions = new ArrayList<AttackAction>();
+            return nestedAttackActions;
+        }
+
+        public ArrayList<Action> getNestedLegendaryActions() {
+
+            if(nestedLegendaryActions == null) nestedLegendaryActions = new ArrayList<Action>();
+            return nestedLegendaryActions;
+        }
+        public ArrayList<Trait> getNestedTraits() {
+
+            if(nestedTraits == null) nestedTraits = new ArrayList<Trait>();
+            return nestedTraits;
+        }
+
+        public void setNestedSenses(String s){
+            nestedSenses = s;
+        }
+
+        public void setNestedSpeeds(String s){
+            nestedSpeeds = s;
+        }
+
+
         ArrayList<Stat> nestedSkills;
 
         public String getNestedSpeeds() {

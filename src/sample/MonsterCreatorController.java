@@ -261,8 +261,10 @@ public class MonsterCreatorController {
                         switch (event.getCode()) {
                             case BACK_SPACE:
                                 tableView.getItems().remove(tableView.getSelectionModel().getFocusedIndex());
+                                delete(tableView);
                                 break;
                             case DELETE:
+                                delete(tableView);
                                 tableView.getItems().remove(tableView.getSelectionModel().getFocusedIndex());
                                 break;
                             case ENTER:
@@ -272,6 +274,106 @@ public class MonsterCreatorController {
                 });
 
             }
+        }
+    }
+
+    private void delete(TableView tableView) {
+        if(tableView.equals(MonsterDetailsTableView)) {
+            switch (MonsterDetailsTableView.getSelectionModel().getSelectedItem().getX()) {
+                case "Language":
+                    monsterBuilder.getNestedLanguages().remove(MonsterDetailsTableView.getSelectionModel().getSelectedItem().getY());
+                    break;
+                case "Sense":
+                    if(monsterBuilder.getNestedSenses().startsWith(MonsterDetailsTableView.getSelectionModel().getSelectedItem().getY())) {
+                        if(MonsterDetailsTableView.getSelectionModel().getSelectedItem().getY().contains("ft.")) {
+                            monsterBuilder.setNestedSenses(monsterBuilder.getNestedSenses().replace(MonsterDetailsTableView.getSelectionModel().getSelectedItem().getY(), ""));
+                        }
+                        else{
+                            monsterBuilder.setNestedSenses(monsterBuilder.getNestedSenses().replace(MonsterDetailsTableView.getSelectionModel().getSelectedItem().getY() + "ft.", ""));
+                        }
+                    }
+                    else{
+                        if(MonsterDetailsTableView.getSelectionModel().getSelectedItem().getY().contains("ft.")) {
+                            monsterBuilder.setNestedSenses(monsterBuilder.getNestedSenses().replace(", " + MonsterDetailsTableView.getSelectionModel().getSelectedItem().getY(), ""));
+                        }
+                        else{
+                            monsterBuilder.setNestedSenses(monsterBuilder.getNestedSenses().replace(", " + MonsterDetailsTableView.getSelectionModel().getSelectedItem().getY() + "ft.", ""));
+                        }
+                    }
+
+                    break;
+                case "Skill":
+                    monsterBuilder.getNestedSkills().remove(MonsterDetailsTableView.getSelectionModel().getSelectedItem().getY());
+                    break;
+                case "Save":
+                    monsterBuilder.getNestedSaves().remove(MonsterDetailsTableView.getSelectionModel().getSelectedItem().getY());
+                    break;
+                case "Dam. Resistance":
+                    monsterBuilder.getNestedResists().remove(MonsterDetailsTableView.getSelectionModel().getSelectedItem().getY());
+                    break;
+                case "Dam. Immunity":
+                    monsterBuilder.getNestedImmunities().remove(MonsterDetailsTableView.getSelectionModel().getSelectedItem().getY());
+                    break;
+                case "Cond. Immunity":
+                    monsterBuilder.getNestedConditionImmunities().remove(MonsterDetailsTableView.getSelectionModel().getSelectedItem().getY());
+                    break;
+            }
+        }
+        if(tableView.equals(MonsterAbilityDetailsTableView)){
+            monsterBuilder.getNestedTraits().remove(MonsterAbilityDetailsTableView.getSelectionModel().getSelectedItem());
+
+        }
+        //VI ER HER
+        if(tableView.equals(MonsterActionDetailsTableView)){
+            System.out.println("LOL" + MonsterActionDetailsTableView.getSelectionModel().getSelectedItem().getName());
+            boolean isAttack = false;
+            AttackAction removeableAttackAction = null;
+            boolean isAction = false;
+            for(AttackAction attackAction: monsterBuilder.getNestedAttackActions()){
+                    if(attackAction.getAction() == MonsterActionDetailsTableView.getSelectionModel().getSelectedItem()){
+                        isAttack = true;
+                        removeableAttackAction = attackAction;
+                    }
+            }
+            for(Action action: monsterBuilder.getNestedActions()){
+                if(action == MonsterActionDetailsTableView.getSelectionModel().getSelectedItem()){
+                    isAction = true;
+                }
+            }
+            if(isAction) {
+                monsterBuilder.getNestedActions().remove(MonsterActionDetailsTableView.getSelectionModel().getSelectedItem());
+            }
+            if(isAttack){
+                if(removeableAttackAction != null) {
+                    System.out.println("HEJ " + removeableAttackAction.getAction().getName());
+                    monsterBuilder.getNestedAttackActions().remove(removeableAttackAction);
+                    for(AttackAction attackAction: monsterBuilder.getNestedAttackActions()){
+                        System.out.println(attackAction.getAction().getName());
+                    }
+                }
+            }
+        }
+        if(tableView.equals(MonsterAddedMovementsTableView)){
+            StringTuple speedTuple = null;
+            try{
+                speedTuple = new StringTuple(MonsterDetailsTableView.getSelectionModel().getSelectedItem().getX(), MonsterDetailsTableView.getSelectionModel().getSelectedItem().getY());
+            }
+            catch(NullPointerException e){
+                speedTuple = new StringTuple("", "");
+            }
+
+            if(!speedTuple.getY().isEmpty()) {
+                System.out.println(speedTuple.getX());
+                System.out.println(speedTuple.getY());
+                monsterBuilder.setNestedSpeeds(monsterBuilder.getNestedSpeeds().replace(speedTuple.getX() + " " + speedTuple.getY() + "ft.", ""));
+            }
+            else{
+                monsterBuilder.setNestedSpeeds(monsterBuilder.getNestedSpeeds().replace(speedTuple.getY() + "ft.", ""));
+            }
+        }
+
+        if(tableView.equals(MonsterLegendaryActionsDetailsTableView)){
+            monsterBuilder.getNestedLegendaryActions().remove(MonsterLegendaryActionsDetailsTableView.getSelectionModel().getSelectedItem());
         }
     }
 
@@ -391,41 +493,49 @@ public class MonsterCreatorController {
             if(monster.getLanguages() != null) {
                 for (String string : monster.getLanguages()) {
                     MonsterDetailsTableView.getItems().add(new StringTuple("Language", string));
+                    monsterBuilder.getNestedLanguages().add(string);
                 }
             }
             if(monster.getSenses() != null) {
                 String[] senses = monster.getSenses().split(",");
                 for (String string : senses) {
                     MonsterDetailsTableView.getItems().add(new StringTuple("Sense", string));
+                    monsterBuilder.senses(string);
                 }
             }
             if(monster.getSaves() != null) {
                 for (Stat stat : monster.getSaves()) {
                     String string = stat.getName() + " + " + stat.getValue();
                     MonsterDetailsTableView.getItems().add(new StringTuple("Save", string));
+                    monsterBuilder.getNestedSaves().add(stat);
                 }
             }
             if(monster.getSkills() != null) {
                 for (Stat stat : monster.getSkills()) {
                     String string = stat.getName() + " + " + stat.getValue();
                     MonsterDetailsTableView.getItems().add(new StringTuple("Skill", string));
+                    monsterBuilder.getNestedSkills().add(stat);
                 }
             }
             if(monster.getResists() != null) {
                 for (String string : monster.getResists()) {
                     MonsterDetailsTableView.getItems().add(new StringTuple("Dam. Resist", string));
+                    monsterBuilder.getNestedResists().add(string);
                 }
             }
             if(monster.getImmunities() != null) {
                 for (String string : monster.getImmunities()) {
                     MonsterDetailsTableView.getItems().add(new StringTuple("Dam. Immunity", string));
+                    monsterBuilder.getNestedImmunities().add(string);
                 }
             }
             if(monster.getConditionImmunities() != null) {
                 for (String string : monster.getConditionImmunities()) {
                     MonsterDetailsTableView.getItems().add(new StringTuple("Cond. Immunity", string));
+                    monsterBuilder.getNestedConditionImmunities().add(string);
                 }
             }
+            //FEJL
             if(monster.getSpeeds() != null) {
                 String[] speed = monster.getSpeeds().split(",");
                 int count = 0;
@@ -436,7 +546,10 @@ public class MonsterCreatorController {
                     Pattern p = Pattern.compile("([a-z]*)( *)([0-9]+)( ft.)(.*)");
                     Matcher m = p.matcher(string);
                     if (m.matches()) {
-                        MonsterAddedMovementsTableView.getItems().add(new StringTuple(m.group(1), m.group(3) + m.group(4)+m.group(5)));
+                        StringTuple speedTuple = new StringTuple(m.group(1), m.group(3) + m.group(4)+m.group(5));
+                        System.out.println(speedTuple.getX()+speedTuple.getY());
+                        MonsterAddedMovementsTableView.getItems().add(speedTuple);
+                        monsterBuilder.speeds(m.group(3) + m.group(4)+m.group(5));
                     }
                     count++;
                 }
@@ -477,10 +590,10 @@ public class MonsterCreatorController {
             MonsterCHATextField.setText(monster.getInfo().getCha() + "");
             if (monster.getSpells() != null) {
                 int count = 0;
+                ArrayList<Spell> monsterSpellArray = new ArrayList<Spell>();
                 for (String string : monster.getSpells()) {
                     if(count > 0) {
                         Spell spell = xmlh.getSpellHashMap().get(string.substring(1).toLowerCase());
-
                         MonsterSpellDetailsTableView.getItems().add(spell);
                         MonsterSpellDetailsTableView.getItems().size();
                     }
@@ -490,27 +603,39 @@ public class MonsterCreatorController {
                     }
                     count++;
                 }
+                monsterBuilder.spells(monster.getSpells());
                 MonsterSpellDetailsTableView.refresh();
             }
+            //FEJL
             if (monster.getTraits() != null) {
                 for (Trait trait : monster.getTraits()) {
+                    monsterBuilder.traits(trait);
                     MonsterAbilityDetailsTableView.getItems().add(trait);
                 }
             }
+            //FEJL
             if (monster.getActions() != null) {
                 for (Action action : monster.getActions()) {
+                    monsterBuilder.actions(action);
+                    System.out.println(action.getTexts());
                     MonsterActionDetailsTableView.getItems().add(action);
                 }
             }
+            //FEJL
             if (monster.getAttackActions() != null){
                 for (AttackAction attackAction: monster.getAttackActions()){
-
+                    monsterBuilder.attackActions(attackAction);
+                    System.out.println(attackAction.getAction().getTexts());
                     MonsterActionDetailsTableView.getItems().add(attackAction.getAction());
                 }
             }
+            //FEJL
             if (monster.getLegendaryActions() != null) {
-                for (Action action : monster.getLegendaryActions())
+                for (Action action : monster.getLegendaryActions()) {
+                    monsterBuilder.legendaryActions(action);
+                    System.out.println(action.getTexts());
                     MonsterLegendaryActionsDetailsTableView.getItems().add((LegendaryAction) action);
+                }
             }
         }
     }
@@ -540,6 +665,7 @@ public class MonsterCreatorController {
                 informationBuilder.cha(Integer.parseInt(MonsterCHATextField.getText()));
                 //BYG EVT. SPELLS
                 if (spellInnateTraitBuilder != null) {
+                    System.out.println("LOL1");
                     if (spellInnateTraitBuilder.getNestedName() != null) {
                         for (String s : innateList) {
                             if (!s.isEmpty()) {
@@ -612,9 +738,10 @@ public class MonsterCreatorController {
                         monsterBuilder.senses(monsterBuilder.getNestedSenses() + " " + MonsterOtherTextField.getText() + "ft.");
                     }
                     else {
-                        monsterBuilder.senses(", " + monsterBuilder.getNestedSenses() + " "  + MonsterOtherTextField.getText() + "ft.");
+                        monsterBuilder.senses(monsterBuilder.getNestedSenses() + ", "  + MonsterOtherTextField.getText() + "ft.");
                     }
-                    MonsterDetailsTableView.getItems().add(new StringTuple(MonsterOtherChoiceBox.getSelectionModel().getSelectedItem(), MonsterOtherTextField.getText()));
+                    MonsterDetailsTableView.getItems().add(new StringTuple("Sense", MonsterOtherTextField.getText()));
+
                     break;
                 case "Saves":
                     Integer integer;
@@ -862,6 +989,8 @@ public class MonsterCreatorController {
                 tv.getItems().clear();
             }
         }
+        informationBuilder = new Information.InformationBuilder();
+        monsterBuilder = new Monster.MonsterBuilder();
     }
 
     private void saveCustomMonsterHashMap(HashMap<String,Monster> monsterMap) {
@@ -971,8 +1100,18 @@ public class MonsterCreatorController {
         private String y;
 
         public StringTuple(String x, String y) {
-            this.x = x;
-            this.y = y;
+            if(x == null || x.isEmpty()){
+                this.x = "";
+            }
+            else{
+                this.x = x;
+            }
+            if(y == null || y.isEmpty()){
+                this.y = "";
+            }
+            else {
+                this.y = y;
+            }
         }
 
         public String getX() {

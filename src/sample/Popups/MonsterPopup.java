@@ -356,15 +356,22 @@ public class MonsterPopup extends Popup {
                     Text text1 = new Text(words[0] + ":");
                     textFlow.getChildren().add(text1);
                     Node n;
-                    if(words.length > 0) {
+                    if(words.length > 1) {
                         for (String s : words[1].split(",")) {
                             if (s.startsWith(" ")) {
                                 s = s.substring(1);
                             }
-
+                            boolean containedStar = false;
+                            if(s.contains("*")){
+                                s = s.replace("*", "");
+                                containedStar = true;
+                            }
                             if (xmlh.getSpellHashMap().containsKey(s.toLowerCase())) {
-                                n = new Hyperlink(s);
                                 String finalS = s;
+                                if(containedStar){
+                                    s = s + "*";
+                                }
+                                n = new Hyperlink(s);
                                 ((Hyperlink) n).setOnAction(e -> {
                                     SpellPopup spellPopup = new SpellPopup(xmlh.getSpellHashMap().get(finalS.toLowerCase()));
                                     spellPopup.show();
@@ -373,6 +380,7 @@ public class MonsterPopup extends Popup {
                                 n = new Text(s + "\n");
 
                             }
+
                             textFlow.getChildren().add(n);
                         }
                     }
