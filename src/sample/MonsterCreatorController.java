@@ -344,6 +344,7 @@ public class MonsterCreatorController {
                 monsterBuilder.getNestedActions().remove(MonsterActionDetailsTableView.getSelectionModel().getSelectedItem());
             }
             if(isAttack){
+                //Lol
                 if(removeableAttackAction != null) {
                     System.out.println("HEJ " + removeableAttackAction.getAction().getName());
                     monsterBuilder.getNestedAttackActions().remove(removeableAttackAction);
