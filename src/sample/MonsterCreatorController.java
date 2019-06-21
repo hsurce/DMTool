@@ -284,23 +284,7 @@ public class MonsterCreatorController {
                     monsterBuilder.getNestedLanguages().remove(MonsterDetailsTableView.getSelectionModel().getSelectedItem().getY());
                     break;
                 case "Sense":
-                    if(monsterBuilder.getNestedSenses().startsWith(MonsterDetailsTableView.getSelectionModel().getSelectedItem().getY())) {
-                        if(MonsterDetailsTableView.getSelectionModel().getSelectedItem().getY().contains("ft.")) {
-                            monsterBuilder.setNestedSenses(monsterBuilder.getNestedSenses().replace(MonsterDetailsTableView.getSelectionModel().getSelectedItem().getY(), ""));
-                        }
-                        else{
-                            monsterBuilder.setNestedSenses(monsterBuilder.getNestedSenses().replace(MonsterDetailsTableView.getSelectionModel().getSelectedItem().getY() + "ft.", ""));
-                        }
-                    }
-                    else{
-                        if(MonsterDetailsTableView.getSelectionModel().getSelectedItem().getY().contains("ft.")) {
-                            monsterBuilder.setNestedSenses(monsterBuilder.getNestedSenses().replace(", " + MonsterDetailsTableView.getSelectionModel().getSelectedItem().getY(), ""));
-                        }
-                        else{
-                            monsterBuilder.setNestedSenses(monsterBuilder.getNestedSenses().replace(", " + MonsterDetailsTableView.getSelectionModel().getSelectedItem().getY() + "ft.", ""));
-                        }
-                    }
-
+                    monsterBuilder.getNestedSenses().remove(MonsterDetailsTableView.getSelectionModel().getSelectedItem().getY());
                     break;
                 case "Skill":
                     monsterBuilder.getNestedSkills().remove(MonsterDetailsTableView.getSelectionModel().getSelectedItem().getY());
@@ -355,22 +339,7 @@ public class MonsterCreatorController {
             }
         }
         if(tableView.equals(MonsterAddedMovementsTableView)){
-            StringTuple speedTuple = null;
-            try{
-                speedTuple = new StringTuple(MonsterDetailsTableView.getSelectionModel().getSelectedItem().getX(), MonsterDetailsTableView.getSelectionModel().getSelectedItem().getY());
-            }
-            catch(NullPointerException e){
-                speedTuple = new StringTuple("", "");
-            }
-
-            if(!speedTuple.getY().isEmpty()) {
-                System.out.println(speedTuple.getX());
-                System.out.println(speedTuple.getY());
-                monsterBuilder.setNestedSpeeds(monsterBuilder.getNestedSpeeds().replace(speedTuple.getX() + " " + speedTuple.getY() + "ft.", ""));
-            }
-            else{
-                monsterBuilder.setNestedSpeeds(monsterBuilder.getNestedSpeeds().replace(speedTuple.getY() + "ft.", ""));
-            }
+            monsterBuilder.getNestedSpeeds().remove(MonsterAddedMovementsTableView.getSelectionModel().getSelectedItem());
         }
 
         if(tableView.equals(MonsterLegendaryActionsDetailsTableView)){
@@ -498,8 +467,7 @@ public class MonsterCreatorController {
                 }
             }
             if(monster.getSenses() != null) {
-                String[] senses = monster.getSenses().split(",");
-                for (String string : senses) {
+                for (String string : monster.getSenses()) {
                     MonsterDetailsTableView.getItems().add(new StringTuple("Sense", string));
                     monsterBuilder.senses(string);
                 }
@@ -538,21 +506,15 @@ public class MonsterCreatorController {
             }
             //FEJL
             if(monster.getSpeeds() != null) {
-                String[] speed = monster.getSpeeds().split(",");
-                int count = 0;
-                for (String string : speed) {
-                    if(count > 0){
-                        string = string.substring(1);
+                for(String string: monster.getSpeeds()){
+                    Pattern Pspeed = Pattern.compile("(\\w+)\\s(\\d+\\s+ft.)");
+                    Matcher Mspeed = Pspeed.matcher(string);
+
+                    // LAV ET PATTERN OG EN MATCHER TIL AT DEFINERE 2 GRUPPER , HENHOLDSVIS NAVN OG HASTIGHED PLUS "ft."
+                    if(Mspeed.matches()) {
+                        MonsterAddedMovementsTableView.getItems().add(new StringTuple(Mspeed.group(1), Mspeed.group(2)));
+                        monsterBuilder.getNestedSpeeds().add(string);
                     }
-                    Pattern p = Pattern.compile("([a-z]*)( *)([0-9]+)( ft.)(.*)");
-                    Matcher m = p.matcher(string);
-                    if (m.matches()) {
-                        StringTuple speedTuple = new StringTuple(m.group(1), m.group(3) + m.group(4)+m.group(5));
-                        System.out.println(speedTuple.getX()+speedTuple.getY());
-                        MonsterAddedMovementsTableView.getItems().add(speedTuple);
-                        monsterBuilder.speeds(m.group(3) + m.group(4)+m.group(5));
-                    }
-                    count++;
                 }
             }
             Double d = monster.getInfo().getCr();

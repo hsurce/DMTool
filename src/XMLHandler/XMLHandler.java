@@ -18,8 +18,12 @@ public class XMLHandler {
         System.out.println(jarFile);
         System.out.println(jarFile.isFile());
         Start();
+        if(customMonsterHashMap == null) {
+            customMonsterHashMap = new HashMap<String, Monster>();
+        }
         monsterHashMap.putAll(customMonsterHashMap);
     }
+
 
     public void Start() {
         try {

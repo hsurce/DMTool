@@ -12,9 +12,9 @@ public class Monster implements Serializable {
     static final long serialVersionUID = 105;
     private Information info;
     private ArrayList<Stat> skills;
-    private String speeds;
+    private ArrayList<String> speeds;
     private ArrayList<Stat> saves;
-    private String senses;
+    private ArrayList<String> senses;
     private ArrayList<Trait> traits;
     private ArrayList<Action> actions;
     private ArrayList<Action> legendaryActions;
@@ -27,7 +27,7 @@ public class Monster implements Serializable {
     private ArrayList<Integer> spellSlots;
     private ArrayList<String> vulnerable;
     public Monster(
-            Information info, ArrayList<Stat> skills, String speeds, ArrayList<Stat> saves, String senses, ArrayList<Trait> traits,
+            Information info, ArrayList<Stat> skills, ArrayList<String> speeds, ArrayList<Stat> saves, ArrayList<String> senses, ArrayList<Trait> traits,
             ArrayList<Action> actions, ArrayList<Action> legendaryActions, ArrayList<AttackAction> attackActions, ArrayList<String> languages,
             ArrayList<String> resists, ArrayList<String> immunities, ArrayList<String> conditionImmunities, ArrayList<String> spells, ArrayList<Integer> spellSlots, ArrayList<String> vulnerable){
 
@@ -65,11 +65,17 @@ public class Monster implements Serializable {
         this.skills = skills;
     }
 
-    public String getSpeeds() {
-        return speeds;
+    public ArrayList<String> getSpeeds() {
+                if(speeds != null){
+                    return speeds;
+                }
+                else{
+                    speeds = new ArrayList<>();
+                    return speeds;
+                }
     }
 
-    public void setSpeeds(String speeds) {
+    public void setSpeeds(ArrayList<String> speeds) {
         this.speeds = speeds;
     }
 
@@ -81,11 +87,17 @@ public class Monster implements Serializable {
         this.saves = saves;
     }
 
-    public String getSenses() {
-        return senses;
+    public ArrayList<String> getSenses() {
+        if(senses != null) {
+            return senses;
+        }
+        else{
+            senses = new ArrayList<>();
+            return senses;
+        }
     }
 
-    public void setSenses(String senses) {
+    public void setSenses(ArrayList<String> senses) {
         this.senses = senses;
     }
 
@@ -232,32 +244,42 @@ public class Monster implements Serializable {
             return nestedTraits;
         }
 
-        public void setNestedSenses(String s){
+        public void setNestedSenses(ArrayList<String> s){
             nestedSenses = s;
         }
 
-        public void setNestedSpeeds(String s){
+        public void setNestedSpeeds(ArrayList<String> s){
             nestedSpeeds = s;
         }
 
 
+        public ArrayList<String> getNestedSpeeds() {
+            if(nestedSpeeds != null){
+                return nestedSpeeds;
+            }
+            else{
+                nestedSpeeds = new ArrayList<>();
+                return nestedSpeeds;
+            }
+
+        }
+
+        public ArrayList<String> getNestedSenses() {
+
+            if(nestedSenses != null){
+                return nestedSenses;
+            }
+            else{
+                nestedSenses = new ArrayList<>();
+                return nestedSenses;
+            }
+        }
+
         ArrayList<Stat> nestedSkills;
 
-        public String getNestedSpeeds() {
-            if(nestedSpeeds == null) nestedSpeeds = "";
+        private ArrayList<String> nestedSpeeds;
 
-            return nestedSpeeds;
-        }
-
-        private String nestedSpeeds;
-
-        public String getNestedSenses() {
-
-            if(nestedSenses == null) nestedSenses = "";
-            return nestedSenses;
-        }
-
-        private String nestedSenses;
+        private ArrayList<String> nestedSenses;
         ArrayList<Stat> nestedSaves;
         ArrayList<Trait> nestedTraits;
         ArrayList<Action> nestedActions;
@@ -312,8 +334,14 @@ public class Monster implements Serializable {
         }
 
 
-        public void speeds(String newSpeeds){
-            nestedSpeeds = newSpeeds;
+        public void speeds(String newSpeed){
+            if(nestedSpeeds != null) {
+                nestedSpeeds.add(newSpeed);
+            }
+            else{
+                nestedSpeeds = new ArrayList<>();
+                nestedSpeeds.add(newSpeed);
+            }
         }
 
         public void skills(ArrayList<Stat> newSkills){
@@ -324,8 +352,14 @@ public class Monster implements Serializable {
             this.nestedSaves = newSaves;
         }
 
-        public void senses(String newSenses){
-            this.nestedSenses = newSenses;
+        public void senses(String newSense){
+            if(nestedSenses != null) {
+                this.nestedSenses.add(newSense);
+            }
+            else{
+                nestedSenses = new ArrayList<>();
+                this.nestedSenses.add(newSense);
+            }
         }
 
         public void traits(Trait newTraits){

@@ -271,8 +271,11 @@ public class MonsterPopup extends Popup {
         TextFlow sensesFlow = new TextFlow();
         Text text1 = new Text("Senses: ");
         text1.setStyle("-fx-font-weight: bold");
-
-        Text text2 = new Text(monster.getSenses());
+        String concatString = "";
+        for(String string: monster.getSenses()){
+            concatString += string;
+        }
+        Text text2 = new Text(concatString);
 
         sensesFlow.getChildren().addAll(text1,text2);
         gridPane.add(sensesFlow,0,counter,1,1);
