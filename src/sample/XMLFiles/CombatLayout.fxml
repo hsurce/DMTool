@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="content" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.CombatController">
+<AnchorPane fx:id="content" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.CombatController">
     <children>
         <Label alignment="CENTER" layoutX="384.0" layoutY="16.0" prefHeight="70.0" prefWidth="192.0" text="Combat" textAlignment="CENTER">
             <font>
@@ -58,13 +58,26 @@
             <Font name="System Bold Italic" size="18.0" />
          </font>
       </Label>
-      <TableView fx:id="ConditionTableView" layoutX="544.0" layoutY="250.0" prefHeight="373.0" prefWidth="364.0">
+      <TableView fx:id="ConditionTableView" layoutX="544.0" layoutY="250.0" prefHeight="200.0" prefWidth="364.0">
         <columns>
           <TableColumn prefWidth="363.0" text="Condition"><cellValueFactory><PropertyValueFactory property="conditionName" />
           </cellValueFactory></TableColumn>
         </columns>
       </TableView>
-      <Button fx:id="DeleteConditionButton" layoutX="544.0" layoutY="632.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="114.0" text="Delete condition" />
-      <Button fx:id="ClearConditionsButton" layoutX="794.0" layoutY="632.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="114.0" text="Clear conditions" />
+      <Button fx:id="DeleteConditionButton" layoutX="544.0" layoutY="458.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="114.0" text="Delete condition" />
+      <Button fx:id="ClearConditionsButton" layoutX="793.0" layoutY="458.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="114.0" text="Clear conditions" />
+      <Label layoutX="548.0" layoutY="505.0" prefHeight="18.0" prefWidth="38.0" text="HP: " />
+      <Label layoutX="685.0" layoutY="505.0" prefHeight="18.0" prefWidth="28.0" text="AC:" />
+      <TextField fx:id="HPTextField" layoutX="587.0" layoutY="501.0" prefHeight="26.0" prefWidth="85.0" />
+      <TextField fx:id="ACTextField" layoutX="726.0" layoutY="501.0" prefHeight="26.0" prefWidth="85.0" />
+      <Label layoutX="548.0" layoutY="568.0" prefHeight="18.0" prefWidth="192.0" text="Damage Immunities: " />
+      <Label layoutX="548.0" layoutY="587.0" prefHeight="18.0" prefWidth="192.0" text="Damage Resistances: " />
+      <Label layoutX="548.0" layoutY="605.0" prefHeight="18.0" prefWidth="192.0" text="Condition Immunities: " />
+      <Label fx:id="DamImmunityLabel" layoutX="709.0" layoutY="568.0" prefHeight="18.0" prefWidth="38.0" text="???" />
+      <Label fx:id="DamResistanceLabel" layoutX="708.0" layoutY="587.0" prefHeight="18.0" prefWidth="38.0" text="???" />
+      <Label fx:id="CondImmunityLabel" layoutX="708.0" layoutY="605.0" prefHeight="18.0" prefWidth="38.0" text="???" />
+      <Label layoutX="548.0" layoutY="538.0" prefHeight="18.0" prefWidth="124.0" text="Current HP: " />
+      <TextField fx:id="CurrentHPTextField" layoutX="630.0" layoutY="534.0" prefHeight="26.0" prefWidth="85.0" />
+      <Label layoutX="539.0" layoutY="678.0" prefHeight="18.0" prefWidth="378.0" text="Duration = ¹, Concentration = ²,  Condition = ³" />
     </children>
 </AnchorPane>

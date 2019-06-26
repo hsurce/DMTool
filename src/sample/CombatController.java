@@ -3,16 +3,20 @@ package sample;
 import XMLHandler.Monster;
 import XMLHandler.Spell;
 import XMLHandler.XMLHandler;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.TextFields;
 import sample.ItemSkeletons.Condition;
@@ -106,6 +110,24 @@ public class CombatController {
     @FXML
     public Button ClearConditionsButton;
 
+    @FXML
+    private TextField HPTextField;
+
+    @FXML
+    private TextField CurrentHPTextField;
+
+
+    @FXML
+    private TextField ACTextField;
+
+    @FXML
+    private Label DamImmunityLabel;
+
+    @FXML
+    private Label DamResistanceLabel;
+
+    @FXML
+    private Label CondImmunityLabel;
 
     public void initialize(GlobalController globalController){
 
@@ -120,7 +142,7 @@ public class CombatController {
 
 
         conditions = new ArrayList(Arrays.asList(new String[]{"Blinded","Charmed","Deafened","Exhaustion","Frightened", "Grappled", "Incapacitated", "Paralyzed", "Petrified",
-        "Poisoned", "Prone", "Restrained", "Stunned", "Unconscious"}));
+        "Poisoned", "Prone", "Restrained", "Stunned", "Unconscious", "Duration", "Concentration"}));
 
         spells = new ArrayList(xmlh.getSpellHashMap().values());
         Collections.sort(spells, (item, t1) -> {
@@ -128,7 +150,7 @@ public class CombatController {
             String s2 = t1.getName();
             return s1.compareToIgnoreCase(s2);
         });
-
+        initializeInitiativeCurrentHPBar();
         initializeSpellOrConditionSearchBar();
         initializeMonsterSearchBar();
         initiateGetMonsterOnDoubleClick();
@@ -152,6 +174,15 @@ public class CombatController {
         forceSortColumn(sortOrder);
     }
 
+    private void initializeInitiativeCurrentHPBar() {
+        CurrentHPTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if(!newValue.isEmpty()) {
+                System.out.println("textfield changed from " + oldValue + " to " + newValue);
+                TableViewInitiative.getSelectionModel().getSelectedItem().setCurrentHP(Integer.parseInt(newValue));
+            }
+        });
+    }
+
     private void initiateTableViewKeyListener() {
 
         TableViewInitiative.setOnKeyPressed(event -> {
@@ -166,10 +197,45 @@ public class CombatController {
                     else TableViewInitiative.getSelectionModel().selectNext();
                     break;
                 case ENTER:
-                    if (!TableViewInitiative.getSelectionModel().isEmpty()) {
+                    if (!TableViewInitiative.getSelectionModel().isEmpty() && !event.isControlDown()) {
                         int j = TableViewInitiative.getSelectionModel().getFocusedIndex();
                         ButtonNewRoll.fire();
                         TableViewInitiative.getSelectionModel().clearAndSelect(j+1);
+                    }
+                    else if(event.isControlDown()){
+                        if(!TableViewInitiative.getSelectionModel().isEmpty()){
+                            if(TableViewInitiative.getSelectionModel().getSelectedItem().getCharacterName().contains("[")) {
+                                Initiative currentInitiative = TableViewInitiative.getSelectionModel().getSelectedItem();
+                                String[] splitName = currentInitiative.getCharacterName().split("\\[");
+                                splitName = splitName[1].split("]");
+                                String number = splitName[0];
+
+                                TextFieldName.setText(currentInitiative.getExtraNotes() + "#" + number);
+                                TextFieldAdditionalNotes.setText(currentInitiative.getExtraNotes()+"");
+                                String rollString;
+                                if(currentInitiative.getInitiativeRoll().substring(0,3).contains("*")){
+                                    rollString = currentInitiative.getInitiativeRoll().substring(0,3);
+                                }
+                                else{
+                                    rollString = currentInitiative.getInitiativeRoll().substring(0,2);
+                                }
+                                TextFieldRoll.setText(rollString);
+
+                                TextFieldDex.setText(currentInitiative.getDexScore()+"");
+                                ButtonAddInitiative.fire();
+                                int numberToInt = Integer.parseInt(number);
+                                numberToInt = numberToInt-1;
+                                if(numberToInt != 0) {
+                                    currentInitiative.setCharacterName(currentInitiative.getExtraNotes() + "[" + numberToInt + "]");
+                                }
+                                else{
+                                    TableViewInitiative.getItems().remove(currentInitiative);
+                                }
+                                forceSortColumn(sortOrder);
+                                TableViewInitiative.refresh();
+                            }
+
+                        }
                     }
                     break;
             }
@@ -211,6 +277,16 @@ public class CombatController {
                     ObservableList<Condition> conditionSelected, allConditions;
                     allConditions = initiative.getConditionTableView().getItems();
                     conditionSelected = ConditionTableView.getSelectionModel().getSelectedItems();
+                    if(conditionSelected.get(0).getConditionName().equals("Duration")){
+                        initiative.setCharacterName(initiative.getCharacterName().replace("¹",""));
+                    }
+                    else if(conditionSelected.get(0).getConditionName().equals("Concentration")){
+                        initiative.setCharacterName(initiative.getCharacterName().replace("²",""));
+                    }
+                    else{
+                        initiative.setCharacterName(initiative.getCharacterName().replace("³",""));
+                    }
+                    TableViewInitiative.refresh();
                     conditionSelected.forEach(allConditions::remove);
                     populateConditionTable(initiative);
                     break;
@@ -244,6 +320,22 @@ public class CombatController {
                         if (InitiativeConditionChoiceBox.getSelectionModel().getSelectedItem().equals(initiative.getCharacterName())) {
                             if (initiative.getConditionTableView().getItems() != null) {
                                 populateConditionTable(initiative);
+                                //MONSTER INFO
+                                HPTextField.setText(initiative.getHp()+"");
+                                ACTextField.setText(initiative.getAc()+"");
+                                CurrentHPTextField.setText(initiative.getCurrentHP()+"");
+                                if(initiative.isHasDamImmunity()) {
+                                    DamImmunityLabel.setText("Yes");
+                                }
+                                else DamImmunityLabel.setText("No");
+                                if(initiative.isHasCondImmunity()) {
+                                    CondImmunityLabel.setText("Yes");
+                                }
+                                else CondImmunityLabel.setText("No");
+                                if(initiative.isHasDamResistance()) {
+                                    DamResistanceLabel.setText("Yes");
+                                }
+                                else DamResistanceLabel.setText("No");
                                 break;
                             }
                         }
@@ -278,17 +370,7 @@ public class CombatController {
             arrListInit.add(new Initiative(stArr[0],stArr[1], stArr[2], Integer.parseInt(stArr[3])));
         }
         br.close();
-        /**
-        //ADD PLAYERS FROM WATERDEEP
-        ArrayList<Initiative> arrListInit = new ArrayList<Initiative>();
-        arrListInit.add(new Initiative("<p>Ivellios", "NEW ROLL!", "Nico", 16));
-        arrListInit.add(new Initiative("<p>Jared", "NEW ROLL!", "Jakob", 18));
-        arrListInit.add(new Initiative("<p>Innil", "NEW ROLL!", "Daniel", 12));
-        arrListInit.add(new Initiative("<p>Belfir", "NEW ROLL!", "Tobias", 16));
-        arrListInit.add(new Initiative("<p>Kevin", "NEW ROLL!", "Christian", 20));
-        arrListInit.add(new Initiative("<p>Caltan", "NEW ROLL!", "Malte", 20));
-        arrListInit.add(new Initiative("<p>Temraz", "NEW ROLL!", "Seb", 12));
-*/
+
         TableViewInitiative.getItems().setAll(arrListInit);
         for(Initiative initiative: arrListInit){
             initiative.calcFinalInitiative();
@@ -304,6 +386,10 @@ public class CombatController {
                     if(xmlh.getMonsterHashMap().containsKey(rowData.getCharacterName())) {
                         MonsterPopup monsterPopup = new MonsterPopup(xmlh, xmlh.getMonsterHashMap().get(rowData.getCharacterName()), globalController.getSpellController());
                         globalController.checkForDuplicatePopup(monsterPopup);
+                        monsterPopup.show();
+                    }
+                    else if(xmlh.getMonsterHashMap().containsKey(rowData.getExtraNotes())){
+                        MonsterPopup monsterPopup = new MonsterPopup(xmlh, xmlh.getMonsterHashMap().get(rowData.getExtraNotes()), globalController.getSpellController());
                         monsterPopup.show();
                     }
                 }
@@ -435,6 +521,47 @@ public class CombatController {
         ButtonAddInitiative.setOnAction(e -> {
             if(!TextFieldDex.getText().isEmpty() && !TextFieldName.getText().isEmpty() && !TextFieldRoll.getText().isEmpty()){
                 Initiative initiative = new Initiative(TextFieldName.getText(),TextFieldRoll.getText(),TextFieldAdditionalNotes.getText(),Integer.parseInt(TextFieldDex.getText()));
+                if(xmlh.getMonsterHashMap().containsKey(TextFieldName.getText())){
+                    Monster monster = xmlh.getMonsterHashMap().get(TextFieldName.getText());
+                    initiative.setAc(monster.getInfo().getAc().getValue());
+                    initiative.setHp(monster.getInfo().getHp());
+                    initiative.setCurrentHP(monster.getInfo().getHp());
+                    //CONDITIONS
+                    if(monster.getConditionImmunities() != null){
+                        initiative.setHasCondImmunity(true);
+                    }
+                    else initiative.setHasCondImmunity(false);
+                    //DAMAGE IMMUNITIES
+                    if(monster.getImmunities() != null){
+                        initiative.setHasDamImmunity(true);
+                    }
+                    else initiative.setHasDamImmunity(false);
+                    //DAMAGE RESISTANCES
+                    if(monster.getResists() != null){
+                        initiative.setHasDamResistance(true);
+                    }
+                    else initiative.setHasDamResistance(false);
+                }
+                else if(xmlh.getMonsterHashMap().containsKey(TextFieldAdditionalNotes.getText())){
+                    Monster monster = xmlh.getMonsterHashMap().get(TextFieldName.getText());
+                    initiative.setAc(monster.getInfo().getAc().getValue());
+                    initiative.setHp(monster.getInfo().getHp());
+                    //CONDITIONS
+                    if(!monster.getConditionImmunities().isEmpty()){
+                        initiative.setHasCondImmunity(true);
+                    }
+                    else initiative.setHasCondImmunity(false);
+                    //DAMAGE IMMUNITIES
+                    if(!monster.getImmunities().isEmpty()){
+                        initiative.setHasDamImmunity(true);
+                    }
+                    else initiative.setHasDamImmunity(false);
+                    //DAMAGE RESISTANCES
+                    if(!monster.getResists().isEmpty()){
+                        initiative.setHasDamResistance(true);
+                    }
+                    else initiative.setHasDamResistance(false);
+                }
 
                 /**
                  * HER ER finalInitiative LAGT TIL FOR LETHEDENS SKYLD. SKAL HAVE BEDRE FIX!
@@ -535,17 +662,85 @@ public class CombatController {
         }
         autoCompletionBindingMonster = TextFields.bindAutoCompletion(monsterSearchBar, monsterNames);
         autoCompletionBindingMonster.setOnAutoCompleted(event ->
-                handleMonsterCompletion(event.getCompletion()));
+
+                handleAddAdditionalMonsterInfo(event.getCompletion()));
 
     }
 
+    private void handleAddAdditionalMonsterInfo(String s){
+        // Clear add info for later.
+        TextFieldName.clear();
+        TextFieldDex.clear();
+        TextFieldRoll.clear();
+        TextFieldAdditionalNotes.clear();
+
+        // Create the custom dialog.
+        Dialog<Pair<String, String>> dialog = new Dialog<>();
+        dialog.setTitle("Add additional monster info");
+        dialog.setHeaderText("Add alternative name and number of monsters!");
+
+
+// Set the button types.
+        ButtonType loginButtonType = new ButtonType("Complete", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
+
+// Create the username and password labels and fields.
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField newName = new TextField();
+        newName.setPromptText("example: Mister newName");
+        TextField numberOfMonsters = new TextField();
+        numberOfMonsters.setPromptText("example: 3");
+
+        grid.add(new Label("New monster name:"), 0, 0);
+        grid.add(newName, 1, 0);
+        grid.add(new Label("Number of monsters:"), 0, 1);
+        grid.add(numberOfMonsters, 1, 1);
+
+
+
+        dialog.getDialogPane().setContent(grid);
+
+// Request focus on the username field by default.
+        Platform.runLater(() -> newName.requestFocus());
+
+// Convert the result to a username-password-pair when the login button is clicked.
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == loginButtonType) {
+                return new Pair<>(newName.getText(), numberOfMonsters.getText());
+            }
+            return null;
+        });
+
+        Optional<Pair<String, String>> result = dialog.showAndWait();
+
+        result.ifPresent(newNameNumberOfMonsters -> {
+
+            if(!newNameNumberOfMonsters.getKey().isEmpty()){
+                if(!newNameNumberOfMonsters.getValue().isEmpty()) {
+                    TextFieldName.setText(newNameNumberOfMonsters.getKey() + "[" + newNameNumberOfMonsters.getValue() + "]");
+                }
+                else TextFieldName.setText(newNameNumberOfMonsters.getKey());
+            }
+            else if(!newNameNumberOfMonsters.getValue().isEmpty()){
+                TextFieldName.setText(s + "[" + newNameNumberOfMonsters.getValue() + "]");
+            }
+
+            System.out.println("Username=" + newNameNumberOfMonsters.getKey() + ", Password=" + newNameNumberOfMonsters.getValue());
+            handleMonsterCompletion(s);
+        });
+
+    }
     private void handleMonsterCompletion(String s) {
         if(xmlh.getMonsterHashMap().containsKey(s)){
             Monster monster = xmlh.getMonsterHashMap().get(s);
-            TextFieldName.clear();
-            TextFieldDex.clear();
-            TextFieldRoll.clear();
-            TextFieldName.setText(monster.getInfo().getName());
+            if(TextFieldName.getText().isEmpty()){
+                TextFieldName.setText(monster.getInfo().getName());
+            }
+            TextFieldAdditionalNotes.setText(monster.getInfo().getName());
             TextFieldDex.setText(monster.getInfo().getDex()+"");
             TextFieldRoll.setText("NEW ROLL!");
             ButtonAddInitiative.fire();
@@ -572,6 +767,7 @@ public class CombatController {
      * @param s Laver en ny condition på baggrund af s, hvis den den condition ikke ligger i listen i forvejen.
      */
     public void handleSpellAndConditionCompletion(String s) {
+        //HER?
             TableViewInitiative.getItems().forEach(initiative -> {
                 if(!InitiativeConditionChoiceBox.getSelectionModel().isEmpty()){
                     if(InitiativeConditionChoiceBox.getSelectionModel().getSelectedItem().equals(initiative.getCharacterName())) {
@@ -587,6 +783,16 @@ public class CombatController {
                         }
                         if(notHasCondition) {
                             initiative.getConditionTableView().getItems().add(condition);
+                            if(condition.getConditionName().equals("Duration")){
+                                initiative.setCharacterName(initiative.getCharacterName() + "¹");
+                            }
+                            else if(condition.getConditionName().equals("Concentration")){
+                                initiative.setCharacterName(initiative.getCharacterName() + "²");
+                            }
+                            else{
+                                initiative.setCharacterName(initiative.getCharacterName() + "³");
+                            }
+                            TableViewInitiative.refresh();
                             populateConditionTable(initiative);
                         }
                     }

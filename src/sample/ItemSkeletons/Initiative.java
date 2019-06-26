@@ -18,6 +18,12 @@ public class Initiative {
     private Matcher m;
     private TableView conditionTableView;
     private TableView spellConditionTableView;
+    private int hp;
+    private int ac;
+    private int currentHP;
+    private boolean hasDamImmunity;
+    private boolean hasDamResistance;
+    private boolean hasCondImmunity;
 
     public Initiative(){
         this.characterName = "";
@@ -104,5 +110,53 @@ public class Initiative {
 
     public TableView getConditionTableView() {
         return conditionTableView;
+    }
+
+    public int getHp() {
+        return hp;
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
+
+    public int getAc() {
+        return ac;
+    }
+
+    public void setAc(int ac) {
+        this.ac = ac;
+    }
+
+    public boolean isHasDamImmunity() {
+        return hasDamImmunity;
+    }
+
+    public void setHasDamImmunity(boolean hasDamImmunity) {
+        this.hasDamImmunity = hasDamImmunity;
+    }
+
+    public boolean isHasDamResistance() {
+        return hasDamResistance;
+    }
+
+    public void setHasDamResistance(boolean hasDamResistance) {
+        this.hasDamResistance = hasDamResistance;
+    }
+
+    public boolean isHasCondImmunity() {
+        return hasCondImmunity;
+    }
+
+    public void setHasCondImmunity(boolean hasCondImmunity) {
+        this.hasCondImmunity = hasCondImmunity;
+    }
+
+    public int getCurrentHP() {
+        return currentHP;
+    }
+
+    public void setCurrentHP(int currentHP) {
+        this.currentHP = currentHP;
     }
 }

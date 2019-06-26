@@ -66,17 +66,11 @@ public class Monster implements Serializable {
     }
 
     public ArrayList<String> getSpeeds() {
-                if(speeds != null){
-                    return speeds;
-                }
-                else{
-                    speeds = new ArrayList<>();
-                    return speeds;
-                }
+        return speeds;
     }
 
-    public void setSpeeds(ArrayList<String> speeds) {
-        this.speeds = speeds;
+    public void setSpeeds(String speeds) {
+        this.speeds.add(speeds);
     }
 
     public ArrayList<Stat> getSaves() {
@@ -88,17 +82,11 @@ public class Monster implements Serializable {
     }
 
     public ArrayList<String> getSenses() {
-        if(senses != null) {
-            return senses;
-        }
-        else{
-            senses = new ArrayList<>();
-            return senses;
-        }
+        return senses;
     }
 
-    public void setSenses(ArrayList<String> senses) {
-        this.senses = senses;
+    public void setSenses(String senses) {
+        this.senses.add(senses);
     }
 
     public ArrayList<Trait> getTraits() {
@@ -244,40 +232,27 @@ public class Monster implements Serializable {
             return nestedTraits;
         }
 
-        public void setNestedSenses(ArrayList<String> s){
-            nestedSenses = s;
+        public void setNestedSenses(String s){
+            nestedSenses.add(s);
         }
 
-        public void setNestedSpeeds(ArrayList<String> s){
-            nestedSpeeds = s;
+        public void setNestedSpeeds(String s){
+            nestedSpeeds.add(s);
         }
 
-
-        public ArrayList<String> getNestedSpeeds() {
-            if(nestedSpeeds != null){
-                return nestedSpeeds;
-            }
-            else{
-                nestedSpeeds = new ArrayList<>();
-                return nestedSpeeds;
-            }
-
-        }
-
-        public ArrayList<String> getNestedSenses() {
-
-            if(nestedSenses != null){
-                return nestedSenses;
-            }
-            else{
-                nestedSenses = new ArrayList<>();
-                return nestedSenses;
-            }
-        }
 
         ArrayList<Stat> nestedSkills;
 
+        public ArrayList<String> getNestedSpeeds() {
+            return nestedSpeeds;
+        }
+
         private ArrayList<String> nestedSpeeds;
+
+        public ArrayList<String> getNestedSenses() {
+
+            return nestedSenses;
+        }
 
         private ArrayList<String> nestedSenses;
         ArrayList<Stat> nestedSaves;
@@ -344,6 +319,7 @@ public class Monster implements Serializable {
             }
         }
 
+
         public void skills(ArrayList<Stat> newSkills){
             this.nestedSkills = newSkills;
         }
@@ -358,7 +334,7 @@ public class Monster implements Serializable {
             }
             else{
                 nestedSenses = new ArrayList<>();
-                this.nestedSenses.add(newSense);
+                nestedSenses.add(newSense);
             }
         }
 

@@ -16,8 +16,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class MonsterCreatorController {
 
@@ -507,14 +505,8 @@ public class MonsterCreatorController {
             //FEJL
             if(monster.getSpeeds() != null) {
                 for(String string: monster.getSpeeds()){
-                    Pattern Pspeed = Pattern.compile("(\\w+)\\s(\\d+\\s+ft.)");
-                    Matcher Mspeed = Pspeed.matcher(string);
-
-                    // LAV ET PATTERN OG EN MATCHER TIL AT DEFINERE 2 GRUPPER , HENHOLDSVIS NAVN OG HASTIGHED PLUS "ft."
-                    if(Mspeed.matches()) {
-                        MonsterAddedMovementsTableView.getItems().add(new StringTuple(Mspeed.group(1), Mspeed.group(2)));
-                        monsterBuilder.getNestedSpeeds().add(string);
-                    }
+                    String[] speedString = string.split(",");
+                    MonsterAddedMovementsTableView.getItems().add(new StringTuple(speedString[0],speedString[1]));
                 }
             }
             Double d = monster.getInfo().getCr();
